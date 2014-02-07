@@ -1,0 +1,28 @@
+{
+    "manifest_version": 2,
+    
+    "name": "RacoMonitor",
+    "description": "Notification manager for Racó de la FIB (UPC)",
+    "version": "1.0",
+    "author": "David Martín Alaminos",
+    
+    "permissions": [
+        "https://raco.fib.upc.edu/*",
+        "http://raco.fib.upc.edu/*",
+        "alarms",
+        "background",
+        "notifications"
+    ],
+    
+    "background": {"scripts": ["js/moment.js","js/background.js"]},
+    
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html",
+        "default_title": "RacóMonitor"
+    },
+    
+    "web_accessible_resources": [
+        "icon.png"
+    ]
+}
