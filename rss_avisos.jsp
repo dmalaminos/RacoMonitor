@@ -18,7 +18,7 @@
 						<title><![CDATA[GRAU-AC - Notes examen final]]></title>
 						<link><![CDATA[https://raco.fib.upc.edu/avisos/veure.jsp?id=63826&assig=GRAU-AC]]></link>
 						<!-- <description><![CDATA[Pots veure l'avís sencer a  https://raco.fib.upc.edu/avisos/veure.jsp?id=63826&assig=GRAU-AC]]></description> -->
-						<description><![CDATA[<p>Al fitxer adjunt trobareu les notes de l'examen final i de sostenibilitat.</p>
+						<description><![CDATA[<p>Al fitxereroi adjunt trobareu les notes de l'examen final i de sostenibilitat.</p>
 <p>La revisi&oacute; del final ser&agrave; el divendres 24 de gener a l'aula C6-E101 a les 12:00</p>]]></description> 
 						<pubDate>Thu, 23 Jan 2014 17:37:11 +0100</pubDate>
 					

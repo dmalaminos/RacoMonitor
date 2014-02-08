@@ -6,53 +6,12 @@
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="css/jquery-ui-1.10.4.custom.min.css">
+        <link rel="stylesheet" href="css/racomonitor.css">
         <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui-1.10.4.custom.min.js"></script>
         <script type="text/javascript" src="js/moment.js"></script>
         <script type="text/javascript" src="js/bootstrap.js"></script>
         <script type="text/javascript" src="js/popup.js"></script>
-        <style type="text/css">
-            body {
-                height: 100px;
-                width: 600px;
-                padding-top: 10px;
-            }
-            ::-webkit-scrollbar { 
-                display: none; 
-            }
-            h4 {
-                display: inline;
-                position:absolute;
-                left:100px;
-                top:10px;
-            }
-            .container {
-                //overflow: hidden;
-            }
-            .refbtn {
-                float: right;
-            }
-            button {
-                width: 110px;
-            }
-            #accordion {
-                margin-bottom: 10px;
-                width: 450px;
-            }
-            #openall {
-                margin-bottom: 10px;
-                width: 450px;
-            }
-            #clearstorage {
-                width: 150px;
-            }
-            
-            /*.list-group {
-                max-height: 300px;
-                max-width: 600px;
-                overflow: auto;
-            }*/
-        </style>
     </head>
     <body>
         <div class="container">
@@ -67,54 +26,40 @@
                                 <a href="#panel-481044" data-toggle="tab" id="tab2">Avisos anteriores</a>
                             </li>
                             <li>
-                                <a href="#panel-151420" data-toggle="tab" id="tab3">Destacados</a>
-                            </li>
-                            <li>
-                                <a href="#panel-536660" data-toggle="tab" id="tab4">Configuración</a>
+                                <a href="#panel-536660" data-toggle="tab" id="tab3">Configuración</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <p></p>
-                            
-                            <!--<div class="tools">
-                                <div class="refbtn"><button type="button" id="loading-example-btn" data-loading-text="Refrescando" class="btn btn-default">Refrescar</button></div>
-                                <div class="panel-group" id="accordion">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <a data-toggle="collapse" href="#collapseOne">
-                                                <span class="caret"></span> mostrar filtro
-                                            </a>
-                                        </div>
-
-                                        <div id="collapseOne" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                Algo.
-                                            </div>
-                                        </div>
-
+                            <div id="toolbtns">
+                                    <button type="button" class="btn btn-info" id="goraco">Ir al Racó</button>
+                                    <button type="button" class="btn btn-default" id="openlinks">Abrir todos</button>
+                                    <div id="sorter" class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                            Ordenar <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a id="sorttasc" href="#">Título ascendente</a></li>
+                                            <li><a id="sorttdesc" href="#">Título descendente</a></li>
+                                            <li class="divider"></li>
+                                            <li><a id="sortdasc" href="#">Fecha ascendente</a></li>
+                                            <li><a id="sortddesc" href="#">Fecha descendente</a></li>
+                                            <li class="divider"></li>
+                                            <li><a id="sortcour" href="#">Asignatura</a></li>
+                                        </ul>
                                     </div>
-
+                                    <button id="refreshbtn" type="button" class="btn btn-primary" data-loading-text="Refrescando">Refrescar</button>
+                                    <p></p>
                                 </div>
-                            </div>-->
                             <div class="tab-pane fade in active" id="panel-670599">
                                 <div id="emptycontent"><h1>Nada por aquí...</h1></div>
-                                <div id="openall"><a id="openlinks" href="#">Abrir todos</a></div>
+                                <p></p>
                                 <div class="list-group" id="feedcontainer">
-                                    <!--<div class="list-group-item">
-                                        <h4 class="list-group-item-heading"><span class="label label-default">PROP</span> Notas definitivas</h4>
-                                        <p class="list-group-item-text"><a class="commonlink" href="#">abrir Racó</a> | <a href="#">marcar como leído</a></p>
-                                        <p class="list-group-item-text">hace 2 días</p>
-                                    </div>-->
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="panel-481044">
                                 <div id="emptycontent2"><h1>Nada por aquí...</h1></div>
                                 <div class="list-group" id="archcontainer">
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="panel-151420">
-                                <div id="emptycontent3"><h1>Nada por aquí...</h1></div>
-                                <div class="list-group" id="favcontainer">
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="panel-536660">

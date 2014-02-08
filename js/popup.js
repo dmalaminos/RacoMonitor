@@ -9,9 +9,9 @@ var archCach = {type: "arch", status: "bad", content: null};
 var feedSortConfig = "ddesc";
 var archSortConfig = "ddesc";
 var openAllConfig = true;
-
 var alrmVal;
 var relDate;
+
 
 function CourseList() {
     this.courseList = [];
@@ -170,7 +170,6 @@ function getItemByIdE(id) {
 }
 
 function cacheAddItem(it, cache) {
-    console.log("Adding "+it.title+" to "+cache.type);
     if (cache.status) {
         var sConfig;
         if (cache.type === "feed") sConfig = feedSortConfig;
@@ -196,7 +195,7 @@ function cacheAddItem(it, cache) {
                 return;
             case "tdesc":
                 for (var i = 0; i < cache.content.length; ++i) {
-                    if (it.title > cache.content[i].title) {
+                    if (it.title.toUpperCase() > cache.content[i].title.toUpperCase()) {
                         cache.content.splice(i, 0, it);
                         return;
                     }
@@ -205,7 +204,16 @@ function cacheAddItem(it, cache) {
                 return;
             case "tasc":
                 for (var i = 0; i < cache.content.length; ++i) {
-                    if (it.title < cache.content[i].title) {
+                    if (it.title.toUpperCase() < cache.content[i].title.toUpperCase()) {
+                        cache.content.splice(i, 0, it);
+                        return;
+                    }
+                }
+                cache.content.push(it);
+                return;
+            case "cour":
+                for (var i = 0; i < cache.content.length; ++i) {
+                    if (it.parentC.toUpperCase() < cache.content[i].parentC.toUpperCase()) {
                         cache.content.splice(i, 0, it);
                         return;
                     }
@@ -236,8 +244,6 @@ function cacheInvalidate(cache) {
     cache.status = "bad";
     cache.content = null;
 }
-
-
 
 function refreshBadge(n) {
     if (n === 0) chrome.browserAction.setBadgeText({text: ""});
@@ -297,10 +303,10 @@ function showItem(item, end, still, read) {
     if (item.title.length > 47) plainCode += minTitle(item.title)+"</h4></span>";
     else plainCode += item.title+"</h4></span>";
     plainCode += "<p class=\"list-group-item-text\"><a class=\"commonlink\" href=\"";
-    if (!read) plainCode += item.link+"\" target=\"_blank\">abrir Racó</a> | <a href=\"#markread\">marcar como leído</a></p><p class=\"list-group-item-text\">";
-    else plainCode += item.link+"\" target=\"_blank\">abrir Racó</a> | <a href=\"#unmarkread\">marcar como no leído</a></p><p class=\"list-group-item-text\">";
+    if (!read) plainCode += item.link+"\" target=\"_blank\">abrir aviso</a> | <a href=\"#markread\">marcar como leído</a></p><p class=\"list-group-item-text\">";
+    else plainCode += item.link+"\" target=\"_blank\">abrir aviso</a> | <a href=\"#unmarkread\">marcar como no leído</a></p><p class=\"list-group-item-text\">";
     if (relDate) plainCode += moment(item.pubDate).fromNow()+"</p></div>";
-    else plainCode += moment(item.pubDate).format("dddd, D [de] MMMM  YYYY, HH:mm:ss")+"</p></div>";
+    else plainCode += moment(item.pubDate).format("dddd, D [de] MMMM [de] YYYY, HH:mm:ss")+"</p></div>";
     doc.innerHTML += plainCode;
     if (end) {
         plainCode = "<ul class=\"pager\">";
@@ -315,7 +321,6 @@ function showItem(item, end, still, read) {
         doc.innerHTML += plainCode;
         attachNavLinks(still, read);
     }
-    //console.log("Showing item: "+item.parentC+" | "+item.title+" "+item.seen);
 }
 
 function attachLinks(s) {
@@ -323,71 +328,55 @@ function attachLinks(s) {
         $('a[href="#markread"]').click(function() {
             var cuteId = $( this ).parent().parent().attr( "id" );
             var itn = getItemByIdE(cuteId);
-            console.log("\""+itn.title+"\" marked as seen (3)");
+            console.log("\""+itn.title+"\" marked as seen");
             itn.seen = true;
             requestSave();
             $( this ).parent().parent().fadeOut( "slow", function() {
                 $( this ).remove();
                 if (useCache) cacheRemoveItem(itn, feedCach);
                 showPage(feedCach.content, pageMarker, false);
-                //attachLinks(false);
                 if (archCach.status === "ok") {
                     cacheAddItem(itn, archCach);
                     showPage(archCach.content, archMarker, true);
-                    //attachLinks(true);
                 }
-                //attachNavLinks();
-                /////////////attachLinks(true);
                 var n = $("#tab1").children().html();
                 n = parseInt(n) - 1;
                 updateBadges(n);
                 $("#tab1").children().html(n);
+                $("#emptycontent2").attr('style', "display: none;");
                 if (n === 0) {
                     $("#emptycontent").removeAttr('style');
-                    //$("#tab1").children().remove();
                     $('a[href="#next"]').remove();
                     $('a[href="#prev"]').remove();
                 }
-            });
-            
+            });   
         });
     } else {
         $('a[href="#unmarkread"]').click(function() {
-            console.log("unmarking...");
             var cuteId = $( this ).parent().parent().attr( "id" );
             var itn = getItemByIdE(cuteId);
-            console.log("\""+itn.title+"\" marked as seen");
+            console.log("\""+itn.title+"\" marked as unseen");
             itn.seen = false;
             requestSave();
             $( this ).parent().parent().fadeOut( "slow", function() {
                 $( this ).remove();
                 if (useCache) cacheAddItem(itn, feedCach);
                 showPage(feedCach.content, pageMarker, false);
-                
-                //attachLinks(true);
                 if (archCach.status === "ok") {
                     cacheRemoveItem(itn, archCach);
                     showPage(archCach.content, archMarker, true);
-                    //attachLinks(false);
                 }
-                //attachNavLinks();
                 var n = $("#tab1").children().html();
                 n = parseInt(n) + 1;
                 updateBadges(n);
                 $("#tab1").children().html(n);
-                /*if (n === 0) {
-                    $("#emptycontent").removeAttr('style');
-                    $("#tab1").children().remove();
-                    $('a[href="#next"]').remove();
-                    $('a[href="#prev"]').remove();
-                }*/
-                
-                
+                if (archCach.status === "ok" && archCach.content.length === 0) {
+                    $("#emptycontent2").removeAttr('style');
+                    $( "#toolbtns" ).attr('style', "display: none;");
+                }  
             });
         });
-    }
-    
-    
+    }  
 }
 
 function attachNavLinks(still, read) {
@@ -398,7 +387,6 @@ function attachNavLinks(still, read) {
                 removeItems(true);
                 archMarker += 5;
                 showReadItems();
-                //attachLinks(true);
             }
         });
         $('.prevarch').click(function(event) {
@@ -407,7 +395,6 @@ function attachNavLinks(still, read) {
                 removeItems(true);
                 archMarker -= 5;
                 showReadItems();
-                //attachLinks(true);
             }
         });
     } else {
@@ -417,7 +404,6 @@ function attachNavLinks(still, read) {
                 removeItems(false);
                 pageMarker += 5;
                 showLatestItems();
-                //attachLinks(false);
             }
         });
         $('.prevfeed').click(function(event) {
@@ -426,23 +412,25 @@ function attachNavLinks(still, read) {
                 removeItems(false);
                 pageMarker -= 5;
                 showLatestItems();
-                //attachLinks(false);
             }
         });
     }  
-    
 }
 
 function updateBadges(n) {
-    console.log("Updating badges to "+n);
     refreshBadge(n);
     $("#tab1").html("Últimos avisos <span class=\"badge\">"+n+"</span>");
     if (n > 0) {
         $("#emptycontent").attr('style', "display: none;");
-        $("#openlinks").removeAttr('style');
+        $( "#toolbtns" ).removeAttr('style');
+        $( "#goraco" ).removeAttr('style');
+        $( "#openlinks" ).removeAttr('style');
+        $( "#sorter" ).removeAttr('style');
     } else {
         $("#emptycontent").removeAttr('style');
-        $("#openlinks").attr('style', "display: none;");       
+        $( "#goraco" ).attr('style', "display: none;");
+        $( "#openlinks" ).attr('style', "display: none;");
+        $( "#sorter" ).attr('style', "display: none;");
     }
 }
 
@@ -520,12 +508,10 @@ function getUnreadItems() {
 
 function showLatestItems() {
     if (useCache && feedCach.status === "ok") {
-        console.log("Reading from cached content");
+        console.log("Reading from cached content (feed)");
         showPage(feedCach.content, pageMarker, false);
         return;
     }
-    
-    console.log("Generating content... (disabled)");
 }
 
 function getReadItems() {
@@ -543,30 +529,13 @@ function showReadItems() {
         showPage(archCach.content, archMarker, true);
         return;
     }
-    
-    console.log("Generating content... (disabled)");
-    
-    
-    if (items.length > 0) {
-        $("#emptycontent2").attr('style', "display: none;");
-        sortItemsByDate(items, "d");
-        clearContainer("arch");
-        for (var i = archMarker; i < items.length && i < archMarker+5; ++i) {
-            showItem(items[i], (items.length-1 === i || i === archMarker+4), (items.length-archMarker < 6), true);
-        }
-        $('#archcontainer').slimScroll({ scrollTo: '0px' });
-    } else {
-        $("#emptycontent2").removeAttr('style');
-    }
 }
 
 var loadedContentEvent = new Event('loadedContent');
 document.addEventListener('loadedContent', function() {
     if (pageMarker === 0) {
         showLatestItems();
-        //attachLinks(false);
     }
-    
 });
 
 function requestRefreshAndLoad() {
@@ -574,24 +543,27 @@ function requestRefreshAndLoad() {
     chrome.extension.getBackgroundPage().refreshAndLoad();
 }
 
-function openCurrentPageLinks() {
-    console.log("Opening links");
+function openCurrentPageLinks(mode) {
+    var cacheContent, marker;
+    if (mode === "feed") {
+        cacheContent = feedCach.content;
+        marker = pageMarker;
+    } else if (mode === "arch") {
+        cacheContent = archCach.content;
+        marker = archMarker;
+    }
     var last;
-    for (var i = pageMarker; (i < feedCach.content.length && i < pageMarker+5) || (i < feedCach.content.length && openAllConfig); ++i) {
-        var it = getItemByIdE(feedCach.content[i].id);
+    for (var i = marker; (i < cacheContent.length && i < marker+5) || (i < cacheContent.length && openAllConfig); ++i) {
+        var it = getItemByIdE(cacheContent[i].id);
         chrome.tabs.create({ url: it.link });
-        it.seen = true;
+        if (mode === "feed") it.seen = true;
         last = i;
     }
-    feedCach.content.splice(pageMarker, last-pageMarker+1);
-    requestSave();
-    updateBadges(feedCach.content.length);
-}
-
-
-
-function gimmie() {
-    console.log(alrmVal+" "+firstTime);
+    if (mode === "feed") {
+        cacheContent.splice(marker, last-marker+1);
+        requestSave();
+        updateBadges(cacheContent.length);
+    }
 }
 
 function changeAlarmPeriod() {
@@ -605,6 +577,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (useCache) cacheInvalidate(feedCach);
     requestRefreshAndLoad();
     
+    //Alarm period config
     if (localStorage.getItem('alarmPeriod')) {
         alrmVal = parseInt(localStorage.getItem('alarmPeriod'));
     } else {
@@ -612,6 +585,7 @@ document.addEventListener('DOMContentLoaded', function() {
         alrmVal = 1;
     }
     
+    //Date format config
     if (localStorage.getItem('dateFormat')) {
         if (localStorage.getItem('dateFormat') === "rel") {
             relDate = true;
@@ -627,25 +601,36 @@ document.addEventListener('DOMContentLoaded', function() {
         $("#reldate").attr("checked", "checked");
     }
     
+    //Desktop notifications config
     if (localStorage.getItem('desktopNotf')) {
         if (localStorage.getItem('desktopNotf') === "en") {
             chrome.extension.getBackgroundPage().showNotificationsConfig = true;
             $("#enablednotfs").attr("checked", "checked");
-        }
-        else {
+        } else {
             chrome.extension.getBackgroundPage().showNotificationsConfig = false;
             $("#disablednotfs").attr("checked", "checked");
         }
     } else {
-        localStorage.setItem('desktopNotf', "rel");
+        localStorage.setItem('desktopNotf', "en");
         chrome.extension.getBackgroundPage().showNotificationsConfig = true;
         $("#enablednotfs").attr("checked", "checked");
     }
     
+    ///////////////
+    ///////////////
     $(document).ready(function() {
+        //Item links
         $('.commonlink').click(function() {
             chrome.tabs.create({url: $(this).attr('href')});
         });
+        
+        //First tab
+        $('a[href = "#panel-670599"]').click(function() {
+            pageMarker = 0;
+            showLatestItems();
+        });
+        
+        //Second tab
         $('a[href = "#panel-481044"]').click(function() {
             archMarker = 0;
             if (archCach.status === "bad") {
@@ -654,25 +639,153 @@ document.addEventListener('DOMContentLoaded', function() {
                     $("#emptycontent2").attr('style', "display: none;");
                 } else {
                     $("#emptycontent2").removeAttr('style');
+                    $( "#toolbtns" ).attr('style', "display: none;");
                 }
                 sortItemsByDate(items, "d");
                 cacheValidate(items, archCach);
             }
             showReadItems();
-            //attachLinks(true);
         });
-        $('a[href = "#panel-670599"]').click(function() {
-            pageMarker = 0;
-            showLatestItems();
+        
+        //Toolbar for first tab
+        $('a[href = "#panel-670599"]').on('shown.bs.tab', function (e) {
+            if (feedCach.status === "ok" && feedCach.content.length > 0) {
+                $( "#goraco" ).removeAttr('style');
+                $( "#openlinks" ).removeAttr('style');
+                $( "#sorter" ).removeAttr('style');
+            } else {
+                $( "#goraco" ).attr('style', "display: none;");
+                $( "#openlinks" ).attr('style', "display: none;");
+                $( "#sorter" ).attr('style', "display: none;");
+            }
+            $( "#toolbtns" ).removeAttr('style');
+            $('#refreshbtn').removeAttr('style');
         });
+        
+        //Toolbar for second tab
+        $('a[href = "#panel-481044"]').on('shown.bs.tab', function (e) {
+            if (archCach.status === "ok" && archCach.content.length > 0) {
+                $( "#goraco" ).removeAttr('style');
+                $( "#openlinks" ).removeAttr('style');
+                $( "#sorter" ).removeAttr('style');
+            }
+            else {
+                $( "#goraco" ).attr('style', "display: none;");
+                $( "#openlinks" ).attr('style', "display: none;");
+                $( "#sorter" ).attr('style', "display: none;");
+            }
+            $( "#toolbtns" ).removeAttr('style');
+            $('#refreshbtn').attr('style', "display: none;");
+        });
+        
+        //Toolbar? for third tab
+        $('a[href = "#panel-536660"]').on('shown.bs.tab', function (e) {
+            $( "#toolbtns" ).attr('style', "display: none;");
+        });
+        
+        //Sorting button options
+        $('#sorttasc').click(function() {
+            if ($( "#panel-670599" ).hasClass( "active" )) {
+                sortItemsByTitle(feedCach.content, "a");
+                pageMarker = 0;
+                feedSortConfig = "tasc";
+                showLatestItems();
+            } else if ($( "#panel-481044" ).hasClass( "active" )) {
+                sortItemsByTitle(archCach.content, "a");
+                archMarker = 0;
+                archSortConfig = "tasc";
+                showReadItems();
+            }
+        });
+        $('#sorttdesc').click(function() {
+            if ($( "#panel-670599" ).hasClass( "active" )) {
+                sortItemsByTitle(feedCach.content, "d");
+                pageMarker = 0;
+                feedSortConfig = "tdesc";
+                showLatestItems();
+            } else if ($( "#panel-481044" ).hasClass( "active" )) {
+                sortItemsByTitle(archCach.content, "d");
+                archMarker = 0;
+                archSortConfig = "tdesc";
+                showReadItems();
+            }
+        });
+        $('#sortdasc').click(function() {
+            if ($( "#panel-670599" ).hasClass( "active" )) {
+                sortItemsByDate(feedCach.content, "a");
+                pageMarker = 0;
+                feedSortConfig = "dasc";
+                showLatestItems();
+            } else if ($( "#panel-481044" ).hasClass( "active" )) {
+                sortItemsByDate(archCach.content, "a");
+                archMarker = 0;
+                archSortConfig = "dasc";
+                showReadItems();
+            }
+        });
+        $('#sortddesc').click(function() {
+            if ($( "#panel-670599" ).hasClass( "active" )) {
+                sortItemsByDate(feedCach.content, "d");
+                pageMarker = 0;
+                feedSortConfig = "ddesc";
+                showLatestItems();
+            } else if ($( "#panel-481044" ).hasClass( "active" )) {
+                sortItemsByDate(archCach.content, "d");
+                archMarker = 0;
+                archSortConfig = "ddesc";
+                showReadItems();
+            }
+        });
+        $('#sortcour').click(function() {
+            if ($( "#panel-670599" ).hasClass( "active" )) {
+                sortItemsByCourse(feedCach.content);
+                pageMarker = 0;
+                feedSortConfig = "cour";
+                showLatestItems();
+            } else if ($( "#panel-481044" ).hasClass( "active" )) {
+                sortItemsByCourse(archCach.content);
+                archMarker = 0;
+                archSortConfig = "cour";
+                showReadItems();
+            }
+        });
+
+        //Open Raco button
+        $('#goraco').click(function() {
+            chrome.tabs.create({ url: "https://raco.fib.upc.edu/home/portada" });
+        });
+        
+        //Open all items button
+        $('#openlinks').click(function() {
+            if ($( "#panel-670599" ).hasClass( "active" )) {
+                openCurrentPageLinks("feed");
+            } else if ($( "#panel-481044" ).hasClass( "active" )) {
+                openCurrentPageLinks("arch");
+            }
+        });
+        
+        //Refresh content button
+        $('#refreshbtn').click(function() {
+            var btn = $(this);
+            btn.button('loading');
+            requestRefreshAndLoad();
+            setTimeout(function() {
+                btn.button('reset');
+            }, 4000);
+        });
+        
+        ///////////////
+        /// Config tab
+        ///////////////
+        
+        //Clear local storage button
         $('#clearstorage').click(function() {
             var btn = $(this);
             chrome.extension.getBackgroundPage().clearStorageData();
             btn.button('loading');
         });
-        $('#openlinks').click(function() {
-            openCurrentPageLinks();
-        });
+        
+        //Alarm value slider
         $(function() {
             $("#slider").slider({
                 value: alrmVal,
@@ -687,8 +800,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             $("#amount").val($("#slider").slider("value")+" min");
         });
+        
+        //Date format radio buttons
         $('input[name="dateformat"]').on('change', function() {
-            if ($(this).val() == 'rel') {
+            if ($(this).val() === 'rel') {
                 localStorage.setItem('dateFormat', "rel");
                 relDate = true;
             } else {
@@ -696,8 +811,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 relDate = false;
             }
         });
+        
+        //Desktop notifications radio buttons
         $('input[name="desktopnotfs"]').on('change', function() {
-            if ($(this).val() == 'dnotfs') {
+            if ($(this).val() === 'dnotfs') {
                 localStorage.setItem('desktopNotf', "en");
                 chrome.extension.getBackgroundPage().showNotificationsConfig = true;
             } else {
@@ -706,6 +823,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        //Tooltips
         $('#clearstorage').tooltip();
         $('#helpnotfs').tooltip();
         $('#helpdate').tooltip();
@@ -758,4 +876,35 @@ function sortItemsByDate(list, mode) {
         list.sort(sortByAscDate);
     }
     return list;
+}
+
+function sortByDescTitle(item1, item2) {
+    if (item1.title.toUpperCase() > item2.title.toUpperCase()) return -1;
+    if (item1.title.toUpperCase() < item2.title.toUpperCase()) return 1;
+    return 0;
+}
+
+function sortByAscTitle(item1, item2) {
+    if (item1.title.toUpperCase() > item2.title.toUpperCase()) return 1;
+    if (item1.title.toUpperCase() < item2.title.toUpperCase()) return -1;
+    return 0;
+}
+
+function sortByCourseName(item1, item2) {
+    if (item1.parentC.toUpperCase() > item2.parentC.toUpperCase()) return 1;
+    if (item1.parentC.toUpperCase() < item2.parentC.toUpperCase()) return -1;
+    return sortByDescDate(item1, item2);
+}
+
+function sortItemsByTitle(list, mode) {
+    if (mode === "d") {
+        list.sort(sortByDescTitle);
+    } else if (mode === "a") {
+        list.sort(sortByAscTitle);
+    }
+    return list;
+}
+
+function sortItemsByCourse(list) {
+    list.sort(sortByCourseName);
 }

@@ -1,8 +1,8 @@
 var currentStatus = null;
-var nUnreadItems = 0;
 var showNotificationsConfig = true;
 var saveSlot = null;
 var firstTime = false;
+var alarmPeriod = 1;
 
 
 function CourseList() {
@@ -190,7 +190,6 @@ function saveStatus() {
     console.log("Status saved");
 }
 
-
 function getNotifConfig() {
     if (localStorage.getItem('desktopNotf')) {
         if (localStorage.getItem('desktopNotf') === "en") {
@@ -201,8 +200,6 @@ function getNotifConfig() {
         localStorage.setItem('desktopNotf', "en");
     }
 }
-
-//BACKGROUND!
 
 function getFeed(addr) {
     var xhr = new XMLHttpRequest();
@@ -247,58 +244,23 @@ function whatsup() {
 }
 
 //r
-//e
+//ö
 //g
+//b
 //ő
+//l
 //
-//r
+//é
+//l
 //e
-//j
 //t
-//e
-//m
-
-function getNUnreadItems() {
-    var nItems = 0;
-    for (var i = 0; i < currentStatus.nCourse(); ++i) {
-        var c = currentStatus.getCourseByPos(i);
-        for (var j = 0; i < c.nItems(); ++j) {
-            if (!c.getItemByPos(j).seen) ++nItems;
-        }
-    }
-    return nItems;
-}
-
-var alarmPeriod = 1;
 
 function updateAlarmPeriod() {
-    //console.log("Changing alarm period to "+alarmPeriod);
     chrome.alarms.clearAll();
     chrome.alarms.create('racoAlarm', {
         periodInMinutes : alarmPeriod
     });
 }
-
-chrome.runtime.onStartup.addListener(function () {
-    //Cuando se inicia el navegador, comprobado
-    console.log("STARTUP");
-    checkFeedNow(false);
-    chrome.alarms.create('racoAlarm', {
-        periodInMinutes : alarmPeriod
-    });
-});
-
-chrome.runtime.onInstalled.addListener(function(){
-    //Cuando se instala la extensión
-    console.log("INSTALLED");
-    firstTime = true;////////////////////////////////////////////////////////////////////////////////
-    //currentStatus = new CourseList();
-    //loadLocalStatus();
-    checkFeedNow(false);
-    chrome.alarms.create('racoAlarm', {
-        periodInMinutes : alarmPeriod
-    });
-});
 
 function clearStorageData() {
     localStorage.clear();
@@ -314,13 +276,6 @@ function getLastId() {
     var nli = li+1;
     localStorage.setItem('lastIdentifier', nli);
     return li;
-}
-
-function damelo() {
-    for (var i = 0; i < currentStatus.nCourse(); ++i) {
-        var name = currentStatus.getCourseByPos(i).name;
-        console.log(name+" : "+currentStatus.getCourseByName(name).nItems());
-    }
 }
 
 function diff(readItems) {
@@ -368,10 +323,6 @@ function checkFeedNow(flush) {
     if (firstTime) firstTime = false;
     if (flush) currentStatus = null;
 }
-
-chrome.alarms.onAlarm.addListener(function (alrm) {
-    checkFeedNow(true);
-});
 
 function minTitle(title) {
     if (title.length > 47) {
@@ -425,3 +376,23 @@ function generateNotContent(items) {
 }
 
 
+chrome.runtime.onStartup.addListener(function () {
+    console.log("STARTUP");
+    checkFeedNow(false);
+    chrome.alarms.create('racoAlarm', {
+        periodInMinutes : alarmPeriod
+    });
+});
+
+chrome.runtime.onInstalled.addListener(function(){
+    console.log("INSTALLED");
+    firstTime = true;
+    checkFeedNow(false);
+    chrome.alarms.create('racoAlarm', {
+        periodInMinutes : alarmPeriod
+    });
+});
+
+chrome.alarms.onAlarm.addListener(function (alrm) {
+    checkFeedNow(true);
+});

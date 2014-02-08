@@ -1,0 +1,31 @@
+body {
+    height: 100px;
+    width: 600px;
+    padding-top: 10px;
+}
+::-webkit-scrollbar { 
+    display: none; 
+}
+h4 {
+    display: inline;
+    position:absolute;
+    left:100px;
+    top:10px;
+}
+#refreshbtn {
+    float: right;
+}
+button {
+    width: 110px;
+}
+/*#accordion {
+    margin-bottom: 10px;
+    width: 450px;
+}
+#openall {
+    margin-bottom: 10px;
+    width: 450px;
+}*/
+#clearstorage {
+    width: 150px;
+}
