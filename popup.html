@@ -31,6 +31,8 @@
                         </ul>
                         <div class="tab-content">
                             <p></p>
+                            <div id="authalert" class="alert alert-danger" style="display: none;">No se ha autorizado esta aplicación para utilizar la API del Racó. <a href="#" id="authlink" class="alert-link">Reintentar</a>.</div>
+                            <div id="connalert" class="alert alert-warning" style="display: none;">No se ha podido conectar con el Racó.</div>
                             <div id="toolbtns">
                                     <button type="button" class="btn btn-info" id="goraco">Ir al Racó</button>
                                     <button type="button" class="btn btn-default" id="openlinks">Abrir todos</button>
@@ -100,7 +102,7 @@
                                     <label for = "disablednotfs">desactivadas</label>
                                 </p>
                                 <br>
-                                <button id="clearstorage" type="button" class="btn btn-danger" data-loading-text="Datos borrados" data-toggle="tooltip" data-placement="right" title="Borrar todos los avisos">Borrar datos</button>
+                                <button id="clearstorage" type="button" class="btn btn-danger" data-loading-text="Datos borrados" data-toggle="tooltip" data-placement="right" title="Borrar datos almacenados y refrescar contenido">Reiniciar aplicación</button>
                                 <br>
                                 <p></p>
                             </div>

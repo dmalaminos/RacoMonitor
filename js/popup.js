@@ -2,10 +2,6 @@ var currentStatus = new CourseList();
 var pageMarker = 0;
 var archMarker = 0;
 
-var useCache = true;
-var feedCach = {type: "feed", status: "bad", content: null};
-var archCach = {type: "arch", status: "bad", content: null};
-
 var feedSortConfig = "ddesc";
 var archSortConfig = "ddesc";
 var openAllConfig = true;
@@ -13,6 +9,95 @@ var alrmVal;
 var relDate;
 
 
+/**
+ * Optimization cache
+ * 
+ */
+var useCache = true;
+var feedCach = {type: "feed", status: "bad", content: null};
+var archCach = {type: "arch", status: "bad", content: null};
+
+function cacheAddItem(it, cache) {
+    if (cache.status) {
+        var sConfig;
+        if (cache.type === "feed") sConfig = feedSortConfig;
+        else sConfig = archSortConfig;
+        switch(sConfig) {
+            case "ddesc":
+                for (var i = 0; i < cache.content.length; ++i) {
+                    if (moment(it.pubDate).isAfter(cache.content[i].pubDate)) {
+                        cache.content.splice(i, 0, it);
+                        return;
+                    }
+                }
+                cache.content.push(it);
+                return;
+            case "dasc":
+                for (var i = 0; i < cache.content.length; ++i) {
+                    if (moment(it.pubDate).isBefore(cache.content[i].pubDate)) {
+                        cache.content.splice(i, 0, it);
+                        return;
+                    }
+                }
+                cache.content.push(it);
+                return;
+            case "tdesc":
+                for (var i = 0; i < cache.content.length; ++i) {
+                    if (it.title.toUpperCase() > cache.content[i].title.toUpperCase()) {
+                        cache.content.splice(i, 0, it);
+                        return;
+                    }
+                }
+                cache.content.push(it);
+                return;
+            case "tasc":
+                for (var i = 0; i < cache.content.length; ++i) {
+                    if (it.title.toUpperCase() < cache.content[i].title.toUpperCase()) {
+                        cache.content.splice(i, 0, it);
+                        return;
+                    }
+                }
+                cache.content.push(it);
+                return;
+            case "cour":
+                for (var i = 0; i < cache.content.length; ++i) {
+                    if (it.parentC.toUpperCase() < cache.content[i].parentC.toUpperCase()) {
+                        cache.content.splice(i, 0, it);
+                        return;
+                    }
+                }
+                cache.content.push(it);
+                return;
+        }
+    }
+}
+
+function cacheRemoveItem(it, cache) {
+    if (cache.status) {
+        for (var i = 0; i < cache.content.length; ++i) {
+            if (equalItems(cache.content[i], it)) {
+                cache.content.splice(i, 1);
+                return;
+            }
+        }
+    }
+}
+
+function cacheValidate(cont, cache) {
+    cache.status = "ok";
+    cache.content = cont;
+}
+
+function cacheInvalidate(cache) {
+    cache.status = "bad";
+    cache.content = null;
+}
+
+
+/**
+ * Data structures
+ * 
+ */
 function CourseList() {
     this.courseList = [];
     this.addItem = function(it) {
@@ -169,97 +254,11 @@ function getItemByIdE(id) {
     return null;
 }
 
-function cacheAddItem(it, cache) {
-    if (cache.status) {
-        var sConfig;
-        if (cache.type === "feed") sConfig = feedSortConfig;
-        else sConfig = archSortConfig;
-        switch(sConfig) {
-            case "ddesc":
-                for (var i = 0; i < cache.content.length; ++i) {
-                    if (moment(it.pubDate).isAfter(cache.content[i].pubDate)) {
-                        cache.content.splice(i, 0, it);
-                        return;
-                    }
-                }
-                cache.content.push(it);
-                return;
-            case "dasc":
-                for (var i = 0; i < cache.content.length; ++i) {
-                    if (moment(it.pubDate).isBefore(cache.content[i].pubDate)) {
-                        cache.content.splice(i, 0, it);
-                        return;
-                    }
-                }
-                cache.content.push(it);
-                return;
-            case "tdesc":
-                for (var i = 0; i < cache.content.length; ++i) {
-                    if (it.title.toUpperCase() > cache.content[i].title.toUpperCase()) {
-                        cache.content.splice(i, 0, it);
-                        return;
-                    }
-                }
-                cache.content.push(it);
-                return;
-            case "tasc":
-                for (var i = 0; i < cache.content.length; ++i) {
-                    if (it.title.toUpperCase() < cache.content[i].title.toUpperCase()) {
-                        cache.content.splice(i, 0, it);
-                        return;
-                    }
-                }
-                cache.content.push(it);
-                return;
-            case "cour":
-                for (var i = 0; i < cache.content.length; ++i) {
-                    if (it.parentC.toUpperCase() < cache.content[i].parentC.toUpperCase()) {
-                        cache.content.splice(i, 0, it);
-                        return;
-                    }
-                }
-                cache.content.push(it);
-                return;
-        }
-    }
-}
 
-function cacheRemoveItem(it, cache) {
-    if (cache.status) {
-        for (var i = 0; i < cache.content.length; ++i) {
-            if (equalItems(cache.content[i], it)) {
-                cache.content.splice(i, 1);
-                return;
-            }
-        }
-    }
-}
-
-function cacheValidate(cont, cache) {
-    cache.status = "ok";
-    cache.content = cont;
-}
-
-function cacheInvalidate(cache) {
-    cache.status = "bad";
-    cache.content = null;
-}
-
-function refreshBadge(n) {
-    if (n === 0) chrome.browserAction.setBadgeText({text: ""});
-    else chrome.browserAction.setBadgeText({text: n.toString()});
-}
-
-function getLastId() {
-    var li;
-    if (localStorage.getItem('lastIdentifier')) {
-        li = parseInt(localStorage.getItem('lastIdentifier'));
-    } else li = 1;
-    var nli = li+1;
-    localStorage.setItem('lastIdentifier', nli);
-    return li;
-}
-
+/**
+ * DOM construction
+ * 
+ */
 function clearContainer(cont) {
     var doc = document.getElementById(cont+"container");
     doc.innerHTML = "";
@@ -417,59 +416,79 @@ function attachNavLinks(still, read) {
     }  
 }
 
-function updateBadges(n) {
-    refreshBadge(n);
-    $("#tab1").html("Últimos avisos <span class=\"badge\">"+n+"</span>");
-    if (n > 0) {
-        $("#emptycontent").attr('style', "display: none;");
-        $( "#toolbtns" ).removeAttr('style');
-        $( "#goraco" ).removeAttr('style');
-        $( "#openlinks" ).removeAttr('style');
-        $( "#sorter" ).removeAttr('style');
-    } else {
-        $("#emptycontent").removeAttr('style');
-        $( "#goraco" ).attr('style', "display: none;");
-        $( "#openlinks" ).attr('style', "display: none;");
-        $( "#sorter" ).attr('style', "display: none;");
+
+/**
+ * Page and content management
+ * 
+ */
+function getUnreadItemsFromCourse(cname) {
+    var unreadItems = [];
+    var c = currentStatus.getCourseByName(cname);
+    for (var i = 0; i < c.nItems(); ++i) {
+        if (!c.getItemByPos(i).seen) unreadItems.push(c.getItemByPos(i));
     }
+    return unreadItems;
 }
 
-chrome.runtime.onConnect.addListener(function(port) {
-    console.assert(port.name === "control");
-    port.onMessage.addListener(function(msg) {
-        if (msg.code === "loadedstatus") {
-            currentStatus = new CourseList();
-            currentStatus.parseData(msg.content);
-            console.log("Status restored");
-            var items = getUnreadItems();
-            updateBadges(items.length);
-            sortItemsByDate(items, "d");
-            cacheValidate(items, feedCach);
-            document.dispatchEvent(loadedContentEvent);
-        } else if (msg.code === "emptystatus") {
-            console.log("Couldn't restore status");
-        } else if (msg.code === "livenewsfeed") {
-            currentStatus = new CourseList();
-            if (useCache) cacheInvalidate(feedCach);
-            requestLoad();
-        }
-    });
-});
-
-function requestSave() {
-    console.log("Requesting save operation...");
-    chrome.extension.getBackgroundPage().saveSlot = currentStatus.stringifyData();
-    chrome.extension.getBackgroundPage().saveStatus();
+function getReadItemsFromCourse(cname) {
+    var readItems = [];
+    var c = currentStatus.getCourseByName(cname);
+    for (var i = 0; i < c.nItems(); ++i) {
+        if (c.getItemByPos(i).seen) readItems.push(c.getItemByPos(i));
+    }
+    return readItems;
 }
 
-function requestLoad() {
-    console.log("Requesting saved data...");
-    chrome.extension.getBackgroundPage().loadStatus();
+function sortByDescDate(item1, item2) {
+    if (moment(item1.pubDate).isAfter(item2.pubDate)) return -1;
+    if (moment(item1.pubDate).isBefore(item2.pubDate)) return 1;
+    return 0;
 }
 
-function requestNewItems() {
-    console.log("Requesting latest received items...");
-    chrome.extension.getBackgroundPage().sendNewItems();
+function sortByAscDate(item1, item2) {
+    if (moment(item1.pubDate).isAfter(item2.pubDate)) return 1;
+    if (moment(item1.pubDate).isBefore(item2.pubDate)) return -1;
+    return 0;
+}
+
+function sortItemsByDate(list, mode) {
+    if (mode === "d") {
+        list.sort(sortByDescDate);
+    } else if (mode === "a") {
+        list.sort(sortByAscDate);
+    }
+    return list;
+}
+
+function sortByDescTitle(item1, item2) {
+    if (item1.title.toUpperCase() > item2.title.toUpperCase()) return -1;
+    if (item1.title.toUpperCase() < item2.title.toUpperCase()) return 1;
+    return 0;
+}
+
+function sortByAscTitle(item1, item2) {
+    if (item1.title.toUpperCase() > item2.title.toUpperCase()) return 1;
+    if (item1.title.toUpperCase() < item2.title.toUpperCase()) return -1;
+    return 0;
+}
+
+function sortByCourseName(item1, item2) {
+    if (item1.parentC.toUpperCase() > item2.parentC.toUpperCase()) return 1;
+    if (item1.parentC.toUpperCase() < item2.parentC.toUpperCase()) return -1;
+    return sortByDescDate(item1, item2);
+}
+
+function sortItemsByTitle(list, mode) {
+    if (mode === "d") {
+        list.sort(sortByDescTitle);
+    } else if (mode === "a") {
+        list.sort(sortByAscTitle);
+    }
+    return list;
+}
+
+function sortItemsByCourse(list) {
+    list.sort(sortByCourseName);
 }
 
 function showPage(items, marker, amode) {
@@ -531,18 +550,6 @@ function showReadItems() {
     }
 }
 
-var loadedContentEvent = new Event('loadedContent');
-document.addEventListener('loadedContent', function() {
-    if (pageMarker === 0) {
-        showLatestItems();
-    }
-});
-
-function requestRefreshAndLoad() {
-    console.log("Requesting refresh and load");
-    chrome.extension.getBackgroundPage().refreshAndLoad();
-}
-
 function openCurrentPageLinks(mode) {
     var cacheContent, marker;
     if (mode === "feed") {
@@ -566,11 +573,101 @@ function openCurrentPageLinks(mode) {
     }
 }
 
+
+/**
+ * Background interaction
+ * 
+ */
+function requestSave() {
+    console.log("Requesting save operation...");
+    chrome.extension.getBackgroundPage().saveSlot = currentStatus.stringifyData();
+    chrome.extension.getBackgroundPage().saveStatus();
+}
+
+function requestLoad() {
+    console.log("Requesting saved data...");
+    chrome.extension.getBackgroundPage().loadStatus();
+}
+
+function requestNewItems() {
+    console.log("Requesting latest received items...");
+    chrome.extension.getBackgroundPage().sendNewItems();
+}
+
+function requestRefreshAndLoad() {
+    console.log("Requesting refresh and load");
+    chrome.extension.getBackgroundPage().refreshAndLoad();
+}
+
 function changeAlarmPeriod() {
     chrome.extension.getBackgroundPage().alarmPeriod = alrmVal;
     chrome.extension.getBackgroundPage().updateAlarmPeriod();
     localStorage.setItem('alarmPeriod', alrmVal);
 }
+
+
+/**
+ * Badges
+ * 
+ */
+function refreshBadge(n) {
+    if (n === 0) chrome.browserAction.setBadgeText({text: ""});
+    else chrome.browserAction.setBadgeText({text: n.toString()});
+}
+
+function updateBadges(n) {
+    refreshBadge(n);
+    $("#tab1").html("Últimos avisos <span class=\"badge\">"+n+"</span>");
+    if (n > 0) {
+        $("#emptycontent").attr('style', "display: none;");
+        $( "#toolbtns" ).removeAttr('style');
+        $( "#goraco" ).removeAttr('style');
+        $( "#openlinks" ).removeAttr('style');
+        $( "#sorter" ).removeAttr('style');
+    } else {
+        $("#emptycontent").removeAttr('style');
+        $( "#goraco" ).attr('style', "display: none;");
+        $( "#openlinks" ).attr('style', "display: none;");
+        $( "#sorter" ).attr('style', "display: none;");
+    }
+}
+
+
+/**
+ * Event listeners
+ * 
+ */
+chrome.runtime.onConnect.addListener(function(port) {
+    console.assert(port.name === "control");
+    port.onMessage.addListener(function(msg) {
+        if (msg.code === "loadedstatus") {
+            currentStatus = new CourseList();
+            currentStatus.parseData(msg.content);
+            console.log("Status restored");
+            var items = getUnreadItems();
+            updateBadges(items.length);
+            sortItemsByDate(items, "d");
+            cacheValidate(items, feedCach);
+            document.dispatchEvent(loadedContentEvent);
+        } else if (msg.code === "emptystatus") {
+            console.log("Couldn't restore status");
+            $( "#goraco" ).attr('style', "display: none;");
+            $( "#openlinks" ).attr('style', "display: none;");
+            $( "#sorter" ).attr('style', "display: none;");
+        } else if (msg.code === "livenewsfeed") {
+            currentStatus = new CourseList();
+            if (useCache) cacheInvalidate(feedCach);
+            requestLoad();
+        }
+    });
+});
+
+var loadedContentEvent = new Event('loadedContent');
+document.addEventListener('loadedContent', function() {
+    if (pageMarker === 0) {
+        showLatestItems();
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     moment.lang('es');
@@ -616,9 +713,24 @@ document.addEventListener('DOMContentLoaded', function() {
         $("#enablednotfs").attr("checked", "checked");
     }
     
+    //Authorization alert
+    if (localStorage.getItem('atk') && localStorage.getItem('ats')) {
+        $("#authalert").attr('style', "display: none;");
+    } else $("#authalert").removeAttr('style');
+    
+    //Connection alert
+    if (localStorage.getItem('readerStatus') && localStorage.getItem('readerStatus') === "ok") {
+        $("#connalert").attr('style', "display: none;");
+    } else $("#connalert").removeAttr('style');
+    
     ///////////////
     ///////////////
     $(document).ready(function() {
+        //Authorization link
+        $('#authlink').click(function() {
+            chrome.extension.getBackgroundPage().oAuthorize();
+        });
+        
         //Item links
         $('.commonlink').click(function() {
             chrome.tabs.create({url: $(this).attr('href')});
@@ -783,6 +895,9 @@ document.addEventListener('DOMContentLoaded', function() {
             var btn = $(this);
             chrome.extension.getBackgroundPage().clearStorageData();
             btn.button('loading');
+            cacheInvalidate(feedCach);
+            cacheInvalidate(archCach);
+            requestRefreshAndLoad();
         });
         
         //Alarm value slider
@@ -830,81 +945,3 @@ document.addEventListener('DOMContentLoaded', function() {
         
     });
 });
-    
-/////////////
-////////////
-///////////
-//////////
-/////////
-////////
-///////
-    
-function getUnreadItemsFromCourse(cname) {
-    var unreadItems = [];
-    var c = currentStatus.getCourseByName(cname);
-    for (var i = 0; i < c.nItems(); ++i) {
-        if (!c.getItemByPos(i).seen) unreadItems.push(c.getItemByPos(i));
-    }
-    return unreadItems;
-}
-
-function getReadItemsFromCourse(cname) {
-    var readItems = [];
-    var c = currentStatus.getCourseByName(cname);
-    for (var i = 0; i < c.nItems(); ++i) {
-        if (c.getItemByPos(i).seen) readItems.push(c.getItemByPos(i));
-    }
-    return readItems;
-}
-
-function sortByDescDate(item1, item2) {
-    if (moment(item1.pubDate).isAfter(item2.pubDate)) return -1;
-    if (moment(item1.pubDate).isBefore(item2.pubDate)) return 1;
-    return 0;
-}
-
-function sortByAscDate(item1, item2) {
-    if (moment(item1.pubDate).isAfter(item2.pubDate)) return 1;
-    if (moment(item1.pubDate).isBefore(item2.pubDate)) return -1;
-    return 0;
-}
-
-function sortItemsByDate(list, mode) {
-    if (mode === "d") {
-        list.sort(sortByDescDate);
-    } else if (mode === "a") {
-        list.sort(sortByAscDate);
-    }
-    return list;
-}
-
-function sortByDescTitle(item1, item2) {
-    if (item1.title.toUpperCase() > item2.title.toUpperCase()) return -1;
-    if (item1.title.toUpperCase() < item2.title.toUpperCase()) return 1;
-    return 0;
-}
-
-function sortByAscTitle(item1, item2) {
-    if (item1.title.toUpperCase() > item2.title.toUpperCase()) return 1;
-    if (item1.title.toUpperCase() < item2.title.toUpperCase()) return -1;
-    return 0;
-}
-
-function sortByCourseName(item1, item2) {
-    if (item1.parentC.toUpperCase() > item2.parentC.toUpperCase()) return 1;
-    if (item1.parentC.toUpperCase() < item2.parentC.toUpperCase()) return -1;
-    return sortByDescDate(item1, item2);
-}
-
-function sortItemsByTitle(list, mode) {
-    if (mode === "d") {
-        list.sort(sortByDescTitle);
-    } else if (mode === "a") {
-        list.sort(sortByAscTitle);
-    }
-    return list;
-}
-
-function sortItemsByCourse(list) {
-    list.sort(sortByCourseName);
-}

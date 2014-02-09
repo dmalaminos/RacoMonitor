@@ -9,12 +9,17 @@
     "permissions": [
         "https://raco.fib.upc.edu/*",
         "http://raco.fib.upc.edu/*",
+        "https://raco.fib.upc.edu/oauth/request_token",
+        "https://raco.fib.upc.edu/oauth/protected/authorize",
+        "https://raco.fib.upc.edu/oauth/access_token",
         "alarms",
         "background",
         "notifications"
     ],
     
-    "background": {"scripts": ["js/moment.js","js/background.js"]},
+    "background": {
+        "scripts": ["js/moment.js", "js/jsOAuth-1.3.7.js", "js/background.js"]
+    },
     
     "browser_action": {
         "default_icon": "icon.png",

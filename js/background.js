@@ -3,8 +3,64 @@ var showNotificationsConfig = true;
 var saveSlot = null;
 var firstTime = false;
 var alarmPeriod = 1;
+var flushCondition = false;
 
+/**
+ * OAuth authorization
+ * 
+ */
+var config = {
+    consumerKey: "425170c5-1529-439b-bfae-e522ce316fe1",
+    consumerSecret: "9d9eb9e3-003f-4c3f-ba14-43f52d0c107b",
+    requestTokenUrl: "https://raco.fib.upc.edu/oauth/request_token",
+    authorizationUrl: "https://raco.fib.upc.edu/oauth/protected/authorize",
+    accessTokenUrl: "https://raco.fib.upc.edu/oauth/access_token"
+};
+ 
+var oauth = OAuth(config);
+var oauthStatus = false;
 
+if (localStorage.getItem('atk') && localStorage.getItem('ats')) {
+    oauth.setAccessToken(localStorage.getItem('atk'), localStorage.getItem('ats'));
+    oauthStatus = true;
+} else {
+    oAuthorize();
+}
+
+function oAuthorize() {
+    oauth.fetchRequestToken(function(url) {
+        console.log("Asking user...");
+        var wnd = window.open(url, 'authorise');
+        setTimeout(waitForAuth, 100);
+        
+        function waitForAuth() {
+            if (wnd.closed) {
+                oauth.fetchAccessToken(function(data) {
+                    var accessTokenKey = oauth.getAccessTokenKey();
+                    var accessTokenSecret = oauth.getAccessTokenSecret();
+                    localStorage.setItem('atk', accessTokenKey);
+                    localStorage.setItem('ats', accessTokenSecret);
+                    saveReaderStatus("ok");
+                    console.log('Now authorised for 3-legged requests');
+                    oauthStatus = true;
+                }, function(data) {
+                    console.error("Cannot authorize");
+                    oauthStatus = false;
+                });
+            } else {
+                setTimeout(waitForAuth, 100);
+            }
+        }
+    }, function(data) {
+        console.error("Cannot authorize");
+        oauthStatus = false;
+    });
+}
+
+/**
+ * Data structures 
+ * 
+ */
 function CourseList() {
     this.courseList = [];
     this.addItem = function(it) {
@@ -154,15 +210,23 @@ function existsItem(it) {
     return false;
 }
 
-function refreshBadge(n) {
-    if (n === 0) chrome.browserAction.setBadgeText({text: ""});
-    else chrome.browserAction.setBadgeText({text: n.toString()});
-}
 
+/**
+ * Persistence and popup interaction
+ * 
+ */
 function refreshAndLoad() {
-    checkFeedNow(false);
+    flushCondition = false;
+    checkFeedNow();
     loadStatus();
     currentStatus = null;
+}
+
+function updateAlarmPeriod() {
+    chrome.alarms.clearAll();
+    chrome.alarms.create('racoAlarm', {
+        periodInMinutes : alarmPeriod
+    });
 }
 
 function loadStatus() {
@@ -190,6 +254,26 @@ function saveStatus() {
     console.log("Status saved");
 }
 
+function clearStorageData() {
+    localStorage.clear();
+    firstTime = true;
+    return;
+}
+
+function saveReaderStatus(status) {
+    localStorage.setItem('readerStatus', status);
+}
+
+
+/**
+ * Notifications and badge management
+ * 
+ */
+function refreshBadge(n) {
+    if (n === 0) chrome.browserAction.setBadgeText({text: ""});
+    else chrome.browserAction.setBadgeText({text: n.toString()});
+}
+
 function getNotifConfig() {
     if (localStorage.getItem('desktopNotf')) {
         if (localStorage.getItem('desktopNotf') === "en") {
@@ -199,129 +283,6 @@ function getNotifConfig() {
         showNotificationsConfig = true;
         localStorage.setItem('desktopNotf', "en");
     }
-}
-
-function getFeed(addr) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", addr, false);
-    xhr.send();
-    return xhr.responseXML;
-}
-
-function parseCourseName(rawtitle) {
-    var n = rawtitle.indexOf(" ");
-    return rawtitle.substring(0,n);
-}
-
-function parseItemTitle(rawtitle) {
-    var n = rawtitle.indexOf(" ");
-    return rawtitle.substring(n+3,rawtitle.length-3);
-}
-
-function parseItemLinkDesc(rawlink) {
-    rawlink = rawlink.replace("<![CDATA[","");
-    return rawlink.substring(0,rawlink.length-3);
-}
-
-function whatsup() {
-    var readItems = [];
-    
-    var docXML = getFeed("rss_avisos.jsp");
-    var feedNodeList = docXML.getElementsByTagName("item");
-    
-    for (var i = 0; i < feedNodeList.length; i++) {
-        var str = (feedNodeList[i].getElementsByTagName("title")[0].innerHTML).replace("<![CDATA[","");
-        var name = parseCourseName(str);
-        var title = parseItemTitle(str);
-        var link = parseItemLinkDesc(feedNodeList[i].getElementsByTagName("link")[0].innerHTML);
-        var description = parseItemLinkDesc(feedNodeList[i].getElementsByTagName("description")[0].innerHTML);
-        var pubDate = feedNodeList[i].getElementsByTagName("pubDate")[0].innerHTML;
-
-        var it = new FeedItem(name, title, link, description, pubDate, firstTime);
-        readItems.push(it);
-    }
-    return readItems;
-}
-
-//r
-//ö
-//g
-//b
-//ő
-//l
-//
-//é
-//l
-//e
-//t
-
-function updateAlarmPeriod() {
-    chrome.alarms.clearAll();
-    chrome.alarms.create('racoAlarm', {
-        periodInMinutes : alarmPeriod
-    });
-}
-
-function clearStorageData() {
-    localStorage.clear();
-    firstTime = true;
-    return;
-}
-
-function getLastId() {
-    var li;
-    if (localStorage.getItem('lastIdentifier')) {
-        li = parseInt(localStorage.getItem('lastIdentifier'));
-    } else li = 1;
-    var nli = li+1;
-    localStorage.setItem('lastIdentifier', nli);
-    return li;
-}
-
-function diff(readItems) {
-    var newItems = [];
-    for (var i = 0; i < readItems.length; ++i) {
-        if (!currentStatus.hasCourse(readItems[i].parentC)) newItems.push(readItems[i]);
-        else if (!existsItem(readItems[i])) newItems.push(readItems[i]);
-    }
-    return newItems;
-}
-
-function validateItems(readItems, sendNews) {
-    currentStatus = new CourseList();
-    loadLocalStatus();
-    var newItems = diff(readItems);
-    
-    if (newItems.length > 0) {
-        console.log(newItems.length+" new items found");
-        for (var i = 0; i < newItems.length; ++i) {
-            var it = newItems[i];
-            it.id = getLastId();
-            currentStatus.addItem(it);
-        }
-        var strData = currentStatus.stringifyData();
-        saveSlot = strData;
-        saveStatus();
-        if (sendNews) {
-            var controlPort = chrome.runtime.connect({name: "control"});
-            controlPort.postMessage({code: "livenewsfeed"});
-        }
-        
-        if (!firstTime && showNotificationsConfig) {
-            var notContent = generateNotContent(newItems);
-            showNotification(notContent);
-        }
-    }
-    if (sendNews) currentStatus = null;
-}
-
-function checkFeedNow(flush) {
-    console.log("Checking news "+moment().format('MMMM Do YYYY, h:mm:ss a'));
-    var readItems = whatsup();
-    console.log(readItems.length+" items read");
-    validateItems(readItems, flush);
-    if (firstTime) firstTime = false;
-    if (flush) currentStatus = null;
 }
 
 function minTitle(title) {
@@ -376,9 +337,132 @@ function generateNotContent(items) {
 }
 
 
+/**
+ * Feed and content handling
+ * 
+ */
+function getFeed() {
+    var options = {
+        method: 'POST',
+        url: 'https://raco.fib.upc.edu/api-v1/avisos.rss',
+        success: readFeed,
+        failure: feedError,
+        headers: {
+            'Content-Type': 'application/xml'
+        }
+    };
+    oauth.request(options);
+}
+
+function parseCourseName(rawtitle) {
+    var n = rawtitle.indexOf(" ");
+    return rawtitle.substring(0,n);
+}
+
+function parseItemTitle(rawtitle) {
+    var n = rawtitle.indexOf(" ");
+    return rawtitle.substring(n+3,rawtitle.length-3);
+}
+
+function parseItemLinkDesc(rawlink) {
+    rawlink = rawlink.replace("<![CDATA[","");
+    return rawlink.substring(0,rawlink.length-3);
+}
+
+function readFeed(data) {
+    var readItems = [];
+    var parser = new DOMParser();
+    var xmlDoc = parser.parseFromString(data.text.toString(), "text/xml");
+    console.log(xmlDoc);
+    
+    var feedNodeList = xmlDoc.getElementsByTagName("item");
+    saveReaderStatus("ok");
+    for (var i = 0; i < feedNodeList.length; i++) {
+        var str = (feedNodeList[i].getElementsByTagName("title")[0].innerHTML).replace("<![CDATA[","");
+        var name = parseCourseName(str);
+        var title = parseItemTitle(str);
+        var link = parseItemLinkDesc(feedNodeList[i].getElementsByTagName("link")[0].innerHTML);
+        var description = parseItemLinkDesc(feedNodeList[i].getElementsByTagName("description")[0].innerHTML);
+        var pubDate = feedNodeList[i].getElementsByTagName("pubDate")[0].innerHTML;
+
+        var it = new FeedItem(name, title, link, description, pubDate, firstTime);
+        readItems.push(it);
+    }
+    console.log(readItems.length+" items read");
+    validateItems(readItems, flushCondition);
+    if (firstTime) firstTime = false;
+    if (flushCondition) currentStatus = null;
+}
+
+function feedError() {
+    console.error("Cannot read newsfeed");
+    saveReaderStatus("bad");
+}
+
+function getLastId() {
+    var li;
+    if (localStorage.getItem('lastIdentifier')) {
+        li = parseInt(localStorage.getItem('lastIdentifier'));
+    } else li = 1;
+    var nli = li+1;
+    localStorage.setItem('lastIdentifier', nli);
+    return li;
+}
+
+function diff(readItems) {
+    var newItems = [];
+    for (var i = 0; i < readItems.length; ++i) {
+        if (!currentStatus.hasCourse(readItems[i].parentC)) newItems.push(readItems[i]);
+        else if (!existsItem(readItems[i])) newItems.push(readItems[i]);
+    }
+    return newItems;
+}
+
+function validateItems(readItems, sendNews) {
+    currentStatus = new CourseList();
+    loadLocalStatus();
+    var newItems = diff(readItems);
+    
+    if (newItems.length > 0) {
+        console.log(newItems.length+" new items found");
+        for (var i = 0; i < newItems.length; ++i) {
+            var it = newItems[i];
+            it.id = getLastId();
+            currentStatus.addItem(it);
+        }
+        var strData = currentStatus.stringifyData();
+        saveSlot = strData;
+        saveStatus();
+        if (sendNews) {
+            var controlPort = chrome.runtime.connect({name: "control"});
+            controlPort.postMessage({code: "livenewsfeed"});
+        }
+        
+        if (!firstTime && showNotificationsConfig) {
+            var notContent = generateNotContent(newItems);
+            showNotification(notContent);
+        }
+    }
+    if (sendNews) currentStatus = null;
+}
+
+function checkFeedNow() {
+    console.log("Checking news "+moment().format('MMMM Do YYYY, h:mm:ss a'));
+    getFeed();
+}
+
+
+/**
+ * Event listeners
+ * 
+ */
 chrome.runtime.onStartup.addListener(function () {
     console.log("STARTUP");
-    checkFeedNow(false);
+    
+    if (oauthStatus) {
+        flushCondition = false;
+        checkFeedNow();
+    }
     chrome.alarms.create('racoAlarm', {
         periodInMinutes : alarmPeriod
     });
@@ -387,12 +471,30 @@ chrome.runtime.onStartup.addListener(function () {
 chrome.runtime.onInstalled.addListener(function(){
     console.log("INSTALLED");
     firstTime = true;
-    checkFeedNow(false);
+    if (oauthStatus) {
+        flushCondition = false;
+        checkFeedNow();
+    }
     chrome.alarms.create('racoAlarm', {
         periodInMinutes : alarmPeriod
     });
 });
 
 chrome.alarms.onAlarm.addListener(function (alrm) {
-    checkFeedNow(true);
+    if (oauthStatus) {
+        flushCondition = true;
+        checkFeedNow();
+    }
 });
+
+//r
+//ö
+//g
+//b
+//ő
+//l
+//
+//é
+//l
+//e
+//t
