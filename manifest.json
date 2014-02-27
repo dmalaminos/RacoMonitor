@@ -22,12 +22,17 @@
     },
     
     "browser_action": {
-        "default_icon": "icon.png",
+        "default_icon": "fibicon_1_16x16x32.png",
         "default_popup": "popup.html",
         "default_title": "RacóMonitor"
     },
     
+    "icons": { 
+        "16": "fibicon_1_16x16x32.png",
+        "48": "fibicon_1_48x48x32.png",
+        "128": "fibicon_1_128x128x32.png" },
+    
     "web_accessible_resources": [
-        "icon.png"
+        "fibicon_1_16x16x32.png"
     ]
 }

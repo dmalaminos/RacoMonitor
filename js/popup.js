@@ -301,9 +301,9 @@ function showItem(item, end, still, read) {
     plainCode += item.parentC+"</span><span><h4 class=\"list-group-item-heading\"> ";
     if (item.title.length > 47) plainCode += minTitle(item.title)+"</h4></span>";
     else plainCode += item.title+"</h4></span>";
-    plainCode += "<p class=\"list-group-item-text\"><a class=\"commonlink\" href=\"";
-    if (!read) plainCode += item.link+"\" target=\"_blank\">abrir aviso</a> | <a href=\"#markread\">marcar como leído</a></p><p class=\"list-group-item-text\">";
-    else plainCode += item.link+"\" target=\"_blank\">abrir aviso</a> | <a href=\"#unmarkread\">marcar como no leído</a></p><p class=\"list-group-item-text\">";
+    plainCode += "<p class=\"list-group-item-text\"><a class=\"commonlink\" href=\"#racolink";
+    if (!read) plainCode += "\">abrir aviso</a> | <a href=\"#markread\">marcar como leído</a></p><p class=\"list-group-item-text\">";
+    else plainCode += "\">abrir aviso</a> | <a href=\"#unmarkread\">marcar como no leído</a></p><p class=\"list-group-item-text\">";
     if (relDate) plainCode += moment(item.pubDate).fromNow()+"</p></div>";
     else plainCode += moment(item.pubDate).format("dddd, D [de] MMMM [de] YYYY, HH:mm:ss")+"</p></div>";
     doc.innerHTML += plainCode;
@@ -323,6 +323,20 @@ function showItem(item, end, still, read) {
 }
 
 function attachLinks(s) {
+    $('a[href="#racolink"]').click(function() {
+        var cuteId = $( this ).parent().parent().attr( "id" );
+        var itn = getItemByIdE(cuteId);
+        if (!itn.seen) {
+            console.log("\""+itn.title+"\" marked as seen (link)");
+            itn.seen = true;
+            requestSave();
+            if (useCache) cacheRemoveItem(itn, feedCach);
+        }
+        var n = $("#tab1").children().html();
+        n = parseInt(n) - 1;
+        updateBadges(n);
+        chrome.tabs.create({ url: itn.link });
+    });
     if (!s) {
         $('a[href="#markread"]').click(function() {
             var cuteId = $( this ).parent().parent().attr( "id" );
@@ -900,6 +914,13 @@ document.addEventListener('DOMContentLoaded', function() {
             requestRefreshAndLoad();
         });
         
+        //Reauthorize button
+        $('#reauthorize').click(function() {
+            var btn = $(this);
+            btn.button('loading');
+            chrome.extension.getBackgroundPage().oAuthorize();
+        });
+        
         //Alarm value slider
         $(function() {
             $("#slider").slider({
@@ -940,6 +961,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         //Tooltips
         $('#clearstorage').tooltip();
+        $('#reauthorize').tooltip();
         $('#helpnotfs').tooltip();
         $('#helpdate').tooltip();
         

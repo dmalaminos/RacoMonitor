@@ -295,7 +295,7 @@ function minTitle(title) {
 function showNotification(notContent) {
     chrome.notifications.create('RacoMonitor-notif', {   
         type: 'list', 
-        iconUrl: 'icon.png', 
+        iconUrl: 'fibicon_1_48x48x32.png', 
         title: notContent.title, 
         message: notContent.message
     }, function() {
@@ -373,7 +373,7 @@ function readFeed(data) {
     var readItems = [];
     var parser = new DOMParser();
     var xmlDoc = parser.parseFromString(data.text.toString(), "text/xml");
-    console.log(xmlDoc);
+    //console.log(xmlDoc);
     
     var feedNodeList = xmlDoc.getElementsByTagName("item");
     saveReaderStatus("ok");
