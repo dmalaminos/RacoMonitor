@@ -332,9 +332,11 @@ function attachLinks(s) {
             requestSave();
             if (useCache) cacheRemoveItem(itn, feedCach);
         }
-        var n = $("#tab1").children().html();
-        n = parseInt(n) - 1;
-        updateBadges(n);
+        if ($( "#panel-670599" ).hasClass( "active" )) {
+            var n = $("#tab1").children().html();
+            n = parseInt(n) - 1;
+            updateBadges(n);
+        }
         chrome.tabs.create({ url: itn.link });
     });
     if (!s) {
