@@ -20,7 +20,7 @@
                     <div class="tabbable" id="tabs-439096">
                         <ul class="nav nav-tabs">
                             <li class="active">
-                                <a href="#panel-670599" data-toggle="tab" id="tab1">Últimos avisos</a>
+                                <a href="#panel-670599" data-toggle="tab" id="tab1">Últimos avisos <span class="badge"></span></a>
                             </li>
                             <li>
                                 <a href="#panel-481044" data-toggle="tab" id="tab2">Avisos anteriores</a>
@@ -66,44 +66,59 @@
                             </div>
                             <div class="tab-pane fade" id="panel-536660">
                                 <p>
-                                    <label for="amount">Buscar nuevos avisos cada:</label>
+                                    <label id="refreshlabel" for="amount">Buscar nuevos avisos cada:</label>
                                     <input type="text" id="amount" style="border:0; color:#428bca; font-weight:bold;">
                                 </p>
                                 <div id="slider"></div>
                                 <br>
                                 <p>
-                                    <label>Formato de fecha (<a id="helpdate" href="#" data-toggle="tooltip" data-placement="top" title="Tiempo transcurrido desde ahora o fecha completa de publicación">?</a>): </label>
+                                    <label id="dataformat">Formato de fecha (<a id="helpdate" href="#" data-toggle="tooltip" data-placement="top" title="Tiempo transcurrido desde ahora o fecha completa de publicación">?</a>): </label>
                                     <input type = "radio"
                                            name = "dateformat"
                                            id = "reldate"
                                            value = "rel"
                                            checked = "checked" />
-                                    <label for = "reldate">relativo</label>
+                                    <label id="rellabel" for = "reldate">relativo</label>
 
                                     <input type = "radio"
                                            name = "dateformat"
                                            id = "absdate"
                                            value = "abs" />
-                                    <label for = "absdate">completo</label>
+                                    <label id="abslabel" for = "absdate">completo</label>
                                 </p>
                                 <p>
-                                    <label>Notificaciones de escritorio (<a id="helpnotfs" href="#" data-toggle="tooltip" data-placement="bottom" title="Mostrar notificación cuando haya nuevos avisos">?</a>): </label>
+                                    <label id="notfslabel">Notificaciones de escritorio (<a id="helpnotfs" href="#" data-toggle="tooltip" data-placement="bottom" title="Mostrar notificación cuando lleguen nuevos avisos">?</a>): </label>
                                     <input type = "radio"
                                            name = "desktopnotfs"
                                            id = "enablednotfs"
                                            value = "dnotfs"
                                            checked = "checked" />
-                                    <label for = "enablednotfs">activadas</label>
+                                    <label id="ennotfs" for = "enablednotfs">activadas</label>
 
                                     <input type = "radio"
                                            name = "desktopnotfs"
                                            id = "disablednotfs"
                                            value = "nodnotfs" />
-                                    <label for = "disablednotfs">desactivadas</label>
+                                    <label id="disnotfs" for = "disablednotfs">desactivadas</label>
+                                </p>
+                                <p>
+                                    <label id="langlabel">Idioma (<a id="helplang" href="#" data-toggle="tooltip" data-placement="bottom">?</a>): </label>
+                                    <input type = "radio"
+                                           name = "langselector"
+                                           id = "castlang"
+                                           value = "cast"
+                                           checked = "checked" />
+                                    <label id="castlabel" for = "enablednotfs">castellano</label>
+
+                                    <input type = "radio"
+                                           name = "langselector"
+                                           id = "catlang"
+                                           value = "cat" />
+                                    <label id="catlabel" for = "disablednotfs">catalán</label>
                                 </p>
                                 <br>
-                                <button id="clearstorage" type="button" class="btn btn-danger" data-loading-text="Datos borrados" data-toggle="tooltip" data-placement="right" title="Borrar datos almacenados y refrescar contenido">Reiniciar aplicación</button>
-                                <button id="reauthorize" type="button" class="btn btn-danger" data-loading-text="Reautorizando" data-toggle="tooltip" data-placement="right" title="Reautorizar interacción con el Racó">Reautorizar aplicación</button>
+                                <button id="clearstorage" type="button" class="btn btn-danger" data-loading-text="Datos borrados" data-toggle="tooltip" data-placement="right">Reiniciar aplicación</button>
+                                <button id="reauthorize" type="button" class="btn btn-danger" data-loading-text="Reautorizando" data-toggle="tooltip" data-placement="right">Reautorizar aplicación</button>
                                 <br>
                                 <p></p>
                             </div>

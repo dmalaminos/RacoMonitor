@@ -318,21 +318,39 @@ function generateNotContent(items) {
     }
 
     var notMessage;
-    if (countList[0] === 1) notMessage = "Se ha publicado ";
-    else notMessage = "Se han publicado ";
+    if (!localStorage.getItem('lang')) localStorage.setItem('lang', "cast");
+    if (localStorage.getItem('lang') === "cast") {
+        if (countList[0] === 1) notMessage = "Se ha publicado ";
+        else notMessage = "Se han publicado ";
+    } else {
+        if (countList[0] === 1) notMessage = "S'ha publicat ";
+        else notMessage = "S'han publicat ";
+    }
     for (var i = 0; i < courseNameList.length; ++i) {
         if (i !== 0) {
-            if (i === items.length-2 && items.length > 1) notMessage += " y ";
-            else if (i !== items.length-1) notMessage += ", ";
+            if (i === courseNameList.length-1 && courseNameList.length > 1) {
+                if (localStorage.getItem('lang') === "cast") notMessage += " y ";
+                else notMessage += " i ";
+            } else if (i !== courseNameList.length-1) notMessage += ", ";
         }
         notMessage += countList[i];
-        if (countList[i] === 1) notMessage += " aviso";
-        else notMessage += " avisos";
+        if (localStorage.getItem('lang') === "cast") {
+            if (countList[i] === 1) notMessage += " aviso";
+            else notMessage += " avisos";
+        } else {
+            if (countList[i] === 1) notMessage += " avís";
+            else notMessage += " avisos";
+        }
         notMessage += " de "+courseNameList[i];  
     }
     var notTitle;
-    if (items.length === 1) notTitle = "Nuevo aviso publicado";
-    else notTitle = "Nuevos avisos publicados";
+    if (localStorage.getItem('lang') === "cast") {
+        if (items.length === 1) notTitle = "Nuevo aviso publicado";
+        else notTitle = "Nuevos avisos publicados";
+    } else {
+        if (items.length === 1) notTitle = "Nou avís publicat";
+        else notTitle = "Nous avisos publicats";
+    }
     return {title: notTitle, message: notMessage};
 }
 
@@ -430,6 +448,7 @@ function validateItems(readItems, sendNews) {
             it.id = getLastId();
             currentStatus.addItem(it);
         }
+        /*DMA*/
         var strData = currentStatus.stringifyData();
         saveSlot = strData;
         saveStatus();

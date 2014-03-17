@@ -302,8 +302,20 @@ function showItem(item, end, still, read) {
     if (item.title.length > 47) plainCode += minTitle(item.title)+"</h4></span>";
     else plainCode += item.title+"</h4></span>";
     plainCode += "<p class=\"list-group-item-text\"><a class=\"commonlink\" href=\"#racolink";
-    if (!read) plainCode += "\">abrir aviso</a> | <a href=\"#markread\">marcar como leído</a></p><p class=\"list-group-item-text\">";
-    else plainCode += "\">abrir aviso</a> | <a href=\"#unmarkread\">marcar como no leído</a></p><p class=\"list-group-item-text\">";
+    if (!read) {
+        if (localStorage.getItem('lang') === "cat") {
+            plainCode += "\">obrir avís</a> | <a href=\"#markread\">marcar com llegit</a></p><p class=\"list-group-item-text\">";
+        } else {
+            plainCode += "\">abrir aviso</a> | <a href=\"#markread\">marcar como leído</a></p><p class=\"list-group-item-text\">";
+        }
+    }
+    else {
+        if (localStorage.getItem('lang') === "cat") {
+            plainCode += "\">obrir avís</a> | <a href=\"#unmarkread\">marcar com no llegit</a></p><p class=\"list-group-item-text\">";
+        } else {
+            plainCode += "\">abrir aviso</a> | <a href=\"#unmarkread\">marcar como no leído</a></p><p class=\"list-group-item-text\">";
+        }
+    }
     if (relDate) plainCode += moment(item.pubDate).fromNow()+"</p></div>";
     else plainCode += moment(item.pubDate).format("dddd, D [de] MMMM [de] YYYY, HH:mm:ss")+"</p></div>";
     doc.innerHTML += plainCode;
@@ -315,8 +327,14 @@ function showItem(item, end, still, read) {
         else plainCode += "\"><a class=\"prevfeed\" href=\"#prevfeed\">&larr; anterior</a></li>";
         plainCode += "<li class=\"next";
         if (still) plainCode += " disabled";
-        if (read) plainCode += "\"><a class=\"nextarch\" href=\"#next\">siguiente &rarr;</a></li>";
-        else plainCode += "\"><a class=\"nextfeed\" href=\"#nextfeed\">siguiente &rarr;</a></li>";
+        if (read) {
+            if (localStorage.getItem('lang') === "cat") plainCode += "\"><a class=\"nextarch\" href=\"#next\">següent &rarr;</a></li>";
+            else plainCode += "\"><a class=\"nextarch\" href=\"#next\">siguiente &rarr;</a></li>";
+        }
+        else {
+            if (localStorage.getItem('lang') === "cat") plainCode += "\"><a class=\"nextfeed\" href=\"#nextfeed\">següent &rarr;</a></li>";
+            else plainCode += "\"><a class=\"nextfeed\" href=\"#nextfeed\">siguiente &rarr;</a></li>";
+        }
         doc.innerHTML += plainCode;
         attachNavLinks(still, read);
     }
@@ -633,7 +651,8 @@ function refreshBadge(n) {
 
 function updateBadges(n) {
     refreshBadge(n);
-    $("#tab1").html("Últimos avisos <span class=\"badge\">"+n+"</span>");
+    if (localStorage.getItem('lang') === "cat") $("#tab1").html("Últims avisos <span class=\"badge\">"+n+"</span>");
+    else $("#tab1").html("Últimos avisos <span class=\"badge\">"+n+"</span>");
     if (n > 0) {
         $("#emptycontent").attr('style', "display: none;");
         $( "#toolbtns" ).removeAttr('style');
@@ -648,6 +667,37 @@ function updateBadges(n) {
     }
 }
 
+function changeToCat() {
+    $('#authalert').html('No s\'ha autoritzat aquesta aplicació per utilitzar l\'API del Racó. <a href=\"#\" id=\"authlink\" class=\"alert-link\">Re-intentar</a>.');
+    $('#connalert').html('No s\'ha pogut connectar amb el Racó.');
+    
+    $('#goraco').html('Anar al Racó');
+    $('#openlinks').html('Obrir tots');
+    $('#sorttasc').html('Títol ascendent');
+    $('#sorttdesc').html('Títol descendent');
+    $('#sortdasc').html('Data ascendent');
+    $('#sortddesc').html('Data descendent');
+    $('#sortcour').html('Assignatura');
+    $('#refreshbtn').attr("data-loading-text", "Refrescant");
+
+    $('#dataformat').html('Format de les dates (<a id="helpdate" href="#" data-toggle="tooltip" data-placement="top" title=\"Temps transcorregut des d\'ara o data completa de publicació\">\?</a>): ');
+    $('#rellabel').html('relatiu');
+    $('#abslabel').html('absolut');
+    $('#notfslabel').html('Notificacions d\'escriptori (<a id="helpnotfs" href="#" data-toggle="tooltip" data-placement="bottom" title=\"Mostrar notificació quan arribin nous avisos\">?</a>): ');
+    $('#ennotfs').html('activades');
+    $('#disnotfs').html('desactivades');
+    $('#castlabel').html('castellà');
+    $('#catlabel').html('català');
+    $('#clearstorage').html('Reiniciar aplicació');
+    $('#reauthorize').html('Re-autoritzar aplicació');
+
+    $('#emptycontent').html('<h1>Res per aquí...</h1>');
+    $('#emptycontent2').html('<h1>Res per aquí...</h1>');
+    $('#refreshlabel').html('Cercar nous avisos cada:');
+    $('#tab1').html('Últims avisos');
+    $('#tab2').html('Avisos anteriors');
+    $('#tab3').html('Configuració');
+}
 
 /**
  * Event listeners
@@ -686,7 +736,6 @@ document.addEventListener('loadedContent', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    moment.lang('es');
     if (useCache) cacheInvalidate(feedCach);
     requestRefreshAndLoad();
     
@@ -727,6 +776,18 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('desktopNotf', "en");
         chrome.extension.getBackgroundPage().showNotificationsConfig = true;
         $("#enablednotfs").attr("checked", "checked");
+    }
+    
+    //Language config
+    if (localStorage.getItem('lang')) {
+        if (localStorage.getItem('lang') === "cast") {
+            $("#castlang").attr("checked", "checked");
+        } else {
+            $("#catlang").attr("checked", "checked");
+        }
+    } else {
+        localStorage.setItem('lang', "cast");
+        $("#castlang").attr("checked", "checked");
     }
     
     //Authorization alert
@@ -961,11 +1022,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        //Tooltips
-        $('#clearstorage').tooltip();
-        $('#reauthorize').tooltip();
+        //Language selector radio buttons
+        $('input[name="langselector"]').on('change', function() {
+            if ($(this).val() === 'cast') {
+                localStorage.setItem('lang', "cast");
+            } else {
+                localStorage.setItem('lang', "cat");
+            }
+        });
+        
+        //Tooltips and language
+        if (localStorage.getItem('lang') === "cat") {
+            changeToCat();
+            $('#authlink').click(function() {
+                chrome.extension.getBackgroundPage().oAuthorize();
+            });
+            $('#clearstorage').tooltip({title: "Esborrar dades emmagatzemades i refrescar contingut"});
+            $('#reauthorize').tooltip({title: "Re-autoritzar interacció amb el Racó"});
+            $('#helplang').tooltip({title: "Els canvis s'aplicaran en tornar a obrir el popup"});
+            moment.lang('ca');
+            
+        } else {
+            $('#clearstorage').tooltip({title: "Borrar datos almacenados y refrescar contenido"});
+            $('#reauthorize').tooltip({title: "Reautorizar interacción con el Racó"});
+            $('#helplang').tooltip({title: "Los cambios se aplicarán al volver a abrir el popup"});
+            moment.lang('es');
+        }
         $('#helpnotfs').tooltip();
         $('#helpdate').tooltip();
         
+        
     });
 });
+/*DMA*/

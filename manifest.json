@@ -3,7 +3,7 @@
     
     "name": "RacoMonitor",
     "description": "Notification manager for Racó de la FIB (UPC)",
-    "version": "1.0",
+    "version": "1.0.1",
     "author": "David Martín Alaminos",
     
     "permissions": [
