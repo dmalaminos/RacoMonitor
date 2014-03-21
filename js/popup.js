@@ -282,11 +282,6 @@ function labelColorPicker(cname) {
     }
 }
 
-function minTitle(title) {
-    var sTitle = title.substring(0, 47);
-    return sTitle.concat("...");
-}
-
 function removeItems(read) {
     if (read) $("#archcontainer").empty();
     else $("#feedcontainer").empty();
@@ -298,9 +293,8 @@ function showItem(item, end, still, read) {
     else cont = "feedcontainer";
     var doc = document.getElementById(cont);
     var plainCode = "<div class=\"list-group-item\" id=\""+item.id+"\"><span class=\"label label-"+labelColorPicker(item.parentC)+"\">";
-    plainCode += item.parentC+"</span><span><h4 class=\"list-group-item-heading\"> ";
-    if (item.title.length > 47) plainCode += minTitle(item.title)+"</h4></span>";
-    else plainCode += item.title+"</h4></span>";
+    plainCode += item.parentC+"</span><span><h4 class=\"list-group-item-heading ellipsis\" style=\"width:450px; height:22px\"> ";
+    plainCode += item.title+"</h4></span>";
     plainCode += "<p class=\"list-group-item-text\"><a class=\"commonlink\" href=\"#racolink";
     if (!read) {
         if (localStorage.getItem('lang') === "cat") {
@@ -639,6 +633,46 @@ function changeAlarmPeriod() {
     localStorage.setItem('alarmPeriod', alrmVal);
 }
 
+function isNewVersion(thisVersion, latestVersion) {
+    var t = thisVersion.split(".");
+    var l = latestVersion.split(".");
+    if (parseInt(l[0],10) > parseInt(t[0],10)) return true;
+    if ((parseInt(l[0],10) === parseInt(t[0],10)) && (parseInt(l[1],10) > parseInt(t[1],10))) return true;
+    if ((parseInt(l[0],10) === parseInt(t[0],10)) && (parseInt(l[1],10) === parseInt(t[1],10)) && (parseInt(l[2],10) > parseInt(t[2],10))) return true;
+    return false;
+}
+
+function checkRMVersion() {
+    console.log("Checking for updates...");
+    var oRequest = new XMLHttpRequest();
+    var sURL = "https://dl.dropboxusercontent.com/s/def7bomoaxbz340/currentVersion.txt";
+    oRequest.open("GET",sURL,false);
+        oRequest.onreadystatechange = function (oEvent) {
+        if (oRequest.readyState === 4) {  
+            if (oRequest.status === 200) {  
+              //console.log(oRequest.responseText);
+        } else {  
+          console.log("XMLHttp error", oRequest.statusText);  
+        }
+      }  
+    };
+    
+    try {
+        oRequest.send(null);
+    } catch (err) {
+        console.error(err);
+    }
+
+    if (oRequest.status === 200) {
+        var thisVersion = chrome.runtime.getManifest().version;
+        var latestVersion = oRequest.responseText;
+        //console.log("Checking RacoMonitor version: "+thisVersion+" -> "+latestVersion);
+        if (isNewVersion(thisVersion, latestVersion)) {
+            console.log("New version!");
+            $( "#versioninfo" ).removeAttr('style');
+        }
+    } else console.error("Error recovering latest version!");
+}
 
 /**
  * Badges
@@ -657,12 +691,12 @@ function updateBadges(n) {
         $("#emptycontent").attr('style', "display: none;");
         $( "#toolbtns" ).removeAttr('style');
         $( "#goraco" ).removeAttr('style');
-        $( "#openlinks" ).removeAttr('style');
+        $( "#openmodal" ).removeAttr('style');
         $( "#sorter" ).removeAttr('style');
     } else {
         $("#emptycontent").removeAttr('style');
         $( "#goraco" ).attr('style', "display: none;");
-        $( "#openlinks" ).attr('style', "display: none;");
+        $( "#openmodal" ).attr('style', "display: none;");
         $( "#sorter" ).attr('style', "display: none;");
     }
 }
@@ -670,9 +704,10 @@ function updateBadges(n) {
 function changeToCat() {
     $('#authalert').html('No s\'ha autoritzat aquesta aplicació per utilitzar l\'API del Racó. <a href=\"#\" id=\"authlink\" class=\"alert-link\">Re-intentar</a>.');
     $('#connalert').html('No s\'ha pogut connectar amb el Racó.');
+    $('#versioninfo').html('<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>Hi ha una nova versió de RacoMonitor disponible! <a href=\"https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip\" target=\"_blank\" class=\"alert-link\">Descarregar</a>')
     
     $('#goraco').html('Anar al Racó');
-    $('#openlinks').html('Obrir tots');
+    $('#openmodal').html('Obrir tots');
     $('#sorttasc').html('Títol ascendent');
     $('#sorttdesc').html('Títol descendent');
     $('#sortdasc').html('Data ascendent');
@@ -718,7 +753,7 @@ chrome.runtime.onConnect.addListener(function(port) {
         } else if (msg.code === "emptystatus") {
             console.log("Couldn't restore status");
             $( "#goraco" ).attr('style', "display: none;");
-            $( "#openlinks" ).attr('style', "display: none;");
+            $( "#openmodal" ).attr('style', "display: none;");
             $( "#sorter" ).attr('style', "display: none;");
         } else if (msg.code === "livenewsfeed") {
             currentStatus = new CourseList();
@@ -840,11 +875,11 @@ document.addEventListener('DOMContentLoaded', function() {
         $('a[href = "#panel-670599"]').on('shown.bs.tab', function (e) {
             if (feedCach.status === "ok" && feedCach.content.length > 0) {
                 $( "#goraco" ).removeAttr('style');
-                $( "#openlinks" ).removeAttr('style');
+                $( "#openmodal" ).removeAttr('style');
                 $( "#sorter" ).removeAttr('style');
             } else {
                 $( "#goraco" ).attr('style', "display: none;");
-                $( "#openlinks" ).attr('style', "display: none;");
+                $( "#openmodal" ).attr('style', "display: none;");
                 $( "#sorter" ).attr('style', "display: none;");
             }
             $( "#toolbtns" ).removeAttr('style');
@@ -855,12 +890,12 @@ document.addEventListener('DOMContentLoaded', function() {
         $('a[href = "#panel-481044"]').on('shown.bs.tab', function (e) {
             if (archCach.status === "ok" && archCach.content.length > 0) {
                 $( "#goraco" ).removeAttr('style');
-                $( "#openlinks" ).removeAttr('style');
+                $( "#openmodal" ).removeAttr('style');
                 $( "#sorter" ).removeAttr('style');
             }
             else {
                 $( "#goraco" ).attr('style', "display: none;");
-                $( "#openlinks" ).attr('style', "display: none;");
+                $( "#openmodal" ).attr('style', "display: none;");
                 $( "#sorter" ).attr('style', "display: none;");
             }
             $( "#toolbtns" ).removeAttr('style');
@@ -950,6 +985,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 openCurrentPageLinks("feed");
             } else if ($( "#panel-481044" ).hasClass( "active" )) {
                 openCurrentPageLinks("arch");
+            }
+        });
+        
+        //Open modal
+        $('#openmodal').click(function() {
+            var n;
+            if ($( "#panel-670599" ).hasClass( "active" )) {
+                n = feedCach.content.length;
+            } else if ($( "#panel-481044" ).hasClass( "active" )) {
+                n = archCach.content.length;
+            }
+            
+            if (localStorage.getItem('lang') === "cat") {
+                $('#modaltitle').html('Desitges obrir tots?');
+                $('#modalno').html('No, tancar');
+                if (n === 1) $('#modalmsg').html('Si continues, s\'obrirà <strong>'+n+'</strong> nova pestanya. Els avisos sense llegir es marcaran com llegits i apareixeran en la pestanya d\'avisos anteriors.');
+                else $('#modalmsg').html('Si continues, s\'obriran <strong>'+n+'</strong> noves pestanyes. Els avisos sense llegir es marcaran com llegits i apareixeran en la pestanya d\'avisos anteriors.');
+            } else {
+                if (n === 1) $('#modalmsg').html('Si continúas, se abrirá <strong>'+n+'</strong> nueva pestaña. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.');
+                else $('#modalmsg').html('Si continúas, se abrirán <strong>'+n+'</strong> nuevas pestañas. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.');
             }
         });
         
@@ -1051,7 +1106,11 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#helpnotfs').tooltip();
         $('#helpdate').tooltip();
         
-        
+        //Check for extension updates
+        if (chrome.extension.getBackgroundPage().canCheckUpdates) {
+            checkRMVersion();
+            chrome.extension.getBackgroundPage().canCheckUpdates = false;
+        }
     });
 });
 /*DMA*/

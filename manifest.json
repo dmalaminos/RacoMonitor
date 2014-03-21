@@ -3,7 +3,7 @@
     
     "name": "RacoMonitor",
     "description": "Notification manager for Racó de la FIB (UPC)",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": "David Martín Alaminos",
     
     "permissions": [
@@ -12,6 +12,7 @@
         "https://raco.fib.upc.edu/oauth/request_token",
         "https://raco.fib.upc.edu/oauth/protected/authorize",
         "https://raco.fib.upc.edu/oauth/access_token",
+        "https://www.dropbox.com/*",
         "alarms",
         "background",
         "notifications"

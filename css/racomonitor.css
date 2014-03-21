@@ -18,18 +18,16 @@ h4 {
 button {
     width: 110px;
 }
-/*#accordion {
-    margin-bottom: 10px;
-    width: 450px;
-}
-#openall {
-    margin-bottom: 10px;
-    width: 450px;
-}*/
 #clearstorage {
     width: 150px;
 }
 #reauthorize {
     width: 170px;
     margin-left: 5px;
+}
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
 }

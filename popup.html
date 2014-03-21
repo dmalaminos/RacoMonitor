@@ -33,9 +33,13 @@
                             <p></p>
                             <div id="authalert" class="alert alert-danger" style="display: none;">No se ha autorizado esta aplicación para utilizar la API del Racó. <a href="#" id="authlink" class="alert-link">Reintentar</a>.</div>
                             <div id="connalert" class="alert alert-warning" style="display: none;">No se ha podido conectar con el Racó.</div>
+                            <div id="versioninfo" class="alert alert-info alert-dismissable" style="display: none;">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                ¡Hay una nueva versión de RacoMonitor disponible! <a href="https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip" target="_blank" class="alert-link">Descargar</a>
+                            </div>
                             <div id="toolbtns">
                                     <button type="button" class="btn btn-info" id="goraco">Ir al Racó</button>
-                                    <button type="button" class="btn btn-default" id="openlinks">Abrir todos</button>
+                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#suremodal" id="openmodal">Abrir todos</button>
                                     <div id="sorter" class="btn-group">
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                             Ordenar <span class="caret"></span>
@@ -126,6 +130,24 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="suremodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="modaltitle" class="modal-title">¿Deseas abrir todos?</h3>
+              </div>
+                <div id="modalmsg" class="modal-body center-block">
+                  Si continúas, se abrirán <strong></strong> nuevas pestañas. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.
+                </div>
+              <div class="modal-footer">
+                <button id="modalno" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
+                <button id="openlinks" type="button" class="btn btn-primary">Sí, continuar</button>
+              </div>
+            </div>
+          </div>
         </div>
     </body>
 </html>

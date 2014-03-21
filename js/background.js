@@ -4,6 +4,7 @@ var saveSlot = null;
 var firstTime = false;
 var alarmPeriod = 1;
 var flushCondition = false;
+var canCheckUpdates = true;
 
 /**
  * OAuth authorization
@@ -466,7 +467,7 @@ function validateItems(readItems, sendNews) {
 }
 
 function checkFeedNow() {
-    console.log("Checking news "+moment().format('MMMM Do YYYY, h:mm:ss a'));
+    console.log("Checking news @ "+moment().format('MMMM Do YYYY, h:mm:ss a'));
     getFeed();
 }
 
@@ -485,6 +486,9 @@ chrome.runtime.onStartup.addListener(function () {
     chrome.alarms.create('racoAlarm', {
         periodInMinutes : alarmPeriod
     });
+    chrome.alarms.create('checkUpdate', {
+        periodInMinutes : 60.0
+    });
 });
 
 chrome.runtime.onInstalled.addListener(function(){
@@ -497,12 +501,20 @@ chrome.runtime.onInstalled.addListener(function(){
     chrome.alarms.create('racoAlarm', {
         periodInMinutes : alarmPeriod
     });
+    chrome.alarms.create('checkUpdate', {
+        periodInMinutes : 60.0
+    });
 });
 
 chrome.alarms.onAlarm.addListener(function (alrm) {
-    if (oauthStatus) {
-        flushCondition = true;
-        checkFeedNow();
+    if (alrm.name === 'racoAlarm') {
+        if (oauthStatus) {
+            flushCondition = true;
+            checkFeedNow();
+        }
+    } else if (alrm.name === 'checkUpdate') {
+        console.log("Enabling update check @ "+moment().format('MMMM Do YYYY, h:mm:ss a'));
+        canCheckUpdates = true;
     }
 });
 
