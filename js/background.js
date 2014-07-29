@@ -256,9 +256,14 @@ function saveStatus() {
 }
 
 function clearStorageData() {
+    var atk_bk = localStorage.getItem('atk'); 
+    var ats_bk = localStorage.getItem('ats');
     localStorage.clear();
+    localStorage.setItem('atk', atk_bk);
+    localStorage.setItem('ats', ats_bk);
+    currentStatus = null;
     firstTime = true;
-    return;
+    console.log("Storage cleared");
 }
 
 function saveReaderStatus(status) {
@@ -294,15 +299,16 @@ function minTitle(title) {
 }
 
 function showNotification(notContent) {
+    chrome.notifications.clear('RacoMonitor-notif', function () {});
     chrome.notifications.create('RacoMonitor-notif', {   
-        type: 'list', 
-        iconUrl: 'fibicon_1_48x48x32.png', 
+        type: 'basic', 
+        iconUrl: 'fibicon_2_128x128x32.png', 
         title: notContent.title, 
         message: notContent.message
     }, function() {
         console.log("Notification dispatched");
         setTimeout(function() {
-            chrome.notifications.clear("RacoMonitor-notif", function (wasCleared) {});
+            chrome.notifications.clear("RacoMonitor-notif", function () {});
         }, 10000);
     });
 }
@@ -317,41 +323,28 @@ function generateNotContent(items) {
             countList.push(1);
         } else ++countList[n];
     }
-
-    var notMessage;
+    
     if (!localStorage.getItem('lang')) localStorage.setItem('lang', "cast");
-    if (localStorage.getItem('lang') === "cast") {
-        if (countList[0] === 1) notMessage = "Se ha publicado ";
-        else notMessage = "Se han publicado ";
-    } else {
-        if (countList[0] === 1) notMessage = "S'ha publicat ";
-        else notMessage = "S'han publicat ";
-    }
+    
+    var notMessage;
+    if (countList[0] === 1) notMessage = getText("Se ha publicado")+" ";
+    else notMessage = getText("Se han publicado")+" ";
+
     for (var i = 0; i < courseNameList.length; ++i) {
         if (i !== 0) {
-            if (i === courseNameList.length-1 && courseNameList.length > 1) {
-                if (localStorage.getItem('lang') === "cast") notMessage += " y ";
-                else notMessage += " i ";
-            } else if (i !== courseNameList.length-1) notMessage += ", ";
+            if (i === courseNameList.length-1 && courseNameList.length > 1) notMessage += " "+getText("y")+" ";
+            else if (i !== courseNameList.length-1) notMessage += ", ";
         }
         notMessage += countList[i];
-        if (localStorage.getItem('lang') === "cast") {
-            if (countList[i] === 1) notMessage += " aviso";
-            else notMessage += " avisos";
-        } else {
-            if (countList[i] === 1) notMessage += " avís";
-            else notMessage += " avisos";
-        }
-        notMessage += " de "+courseNameList[i];  
+        if (countList[i] === 1) notMessage += " "+getText("aviso");
+        else notMessage += " "+getText("avisos");
+        notMessage += " "+getText("de")+" "+courseNameList[i];  
     }
+    
     var notTitle;
-    if (localStorage.getItem('lang') === "cast") {
-        if (items.length === 1) notTitle = "Nuevo aviso publicado";
-        else notTitle = "Nuevos avisos publicados";
-    } else {
-        if (items.length === 1) notTitle = "Nou avís publicat";
-        else notTitle = "Nous avisos publicats";
-    }
+    if (items.length === 1) notTitle = getText("Nuevo aviso publicado");
+    else notTitle = getText("Nuevos avisos publicados");
+    
     return {title: notTitle, message: notMessage};
 }
 
@@ -391,6 +384,7 @@ function parseItemLinkDesc(rawlink) {
 function readFeed(data) {
     var readItems = [];
     var parser = new DOMParser();
+    //debería de ser data.text.toString...
     var xmlDoc = parser.parseFromString(data.text.toString(), "text/xml");
     //console.log(xmlDoc);
     
@@ -469,6 +463,15 @@ function validateItems(readItems, sendNews) {
 function checkFeedNow() {
     console.log("Checking news @ "+moment().format('MMMM Do YYYY, h:mm:ss a'));
     getFeed();
+    
+    /*var req = new XMLHttpRequest();
+    req.open('GET', 'rss_avisos.rss', false); 
+    req.send(null);
+    if(req.status === 200) {
+        //console.log(req.responseText);
+        readFeed(req.responseText);
+    }
+    else console.error("Nope. "+req.status);*/
 }
 
 
@@ -493,6 +496,7 @@ chrome.runtime.onStartup.addListener(function () {
 
 chrome.runtime.onInstalled.addListener(function(){
     console.log("INSTALLED");
+    
     firstTime = true;
     if (oauthStatus) {
         flushCondition = false;
@@ -517,6 +521,8 @@ chrome.alarms.onAlarm.addListener(function (alrm) {
         canCheckUpdates = true;
     }
 });
+
+
 
 //r
 //ö

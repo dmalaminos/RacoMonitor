@@ -6,7 +6,8 @@
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="css/jquery-ui-1.10.4.custom.min.css">
-        <link rel="stylesheet" href="css/racomonitor.css">
+        <link rel="stylesheet" href="css/racomonitor.css">      
+        <script type="text/javascript" src="js/i18n.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui-1.10.4.custom.min.js"></script>
         <script type="text/javascript" src="js/moment.js"></script>
@@ -38,25 +39,25 @@
                                 ¡Hay una nueva versión de RacoMonitor disponible! <a href="https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip" target="_blank" class="alert-link">Descargar</a>
                             </div>
                             <div id="toolbtns">
-                                    <button type="button" class="btn btn-info" id="goraco">Ir al Racó</button>
-                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#suremodal" id="openmodal">Abrir todos</button>
-                                    <div id="sorter" class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                            Ordenar <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a id="sorttasc" href="#">Título ascendente</a></li>
-                                            <li><a id="sorttdesc" href="#">Título descendente</a></li>
-                                            <li class="divider"></li>
-                                            <li><a id="sortdasc" href="#">Fecha ascendente</a></li>
-                                            <li><a id="sortddesc" href="#">Fecha descendente</a></li>
-                                            <li class="divider"></li>
-                                            <li><a id="sortcour" href="#">Asignatura</a></li>
-                                        </ul>
-                                    </div>
-                                    <button id="refreshbtn" type="button" class="btn btn-primary" data-loading-text="Refrescando">Refrescar</button>
-                                    <p></p>
+                                <button type="button" class="btn btn-info" id="goraco">Ir al Racó</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#suremodal" id="openmodal">Abrir todos</button>
+                                <div id="sorter" class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        Ordenar <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a id="sorttasc" href="#">Título ascendente</a></li>
+                                        <li><a id="sorttdesc" href="#">Título descendente</a></li>
+                                        <li class="divider"></li>
+                                        <li><a id="sortdasc" href="#">Fecha ascendente</a></li>
+                                        <li><a id="sortddesc" href="#">Fecha descendente</a></li>
+                                        <li class="divider"></li>
+                                        <li><a id="sortcour" href="#">Asignatura</a></li>
+                                    </ul>
                                 </div>
+                                <button id="refreshbtn" type="button" class="btn btn-primary" data-loading-text="Refrescando">Refrescar</button>
+                                <p></p>
+                            </div>
                             <div class="tab-pane fade in active" id="panel-670599">
                                 <div id="emptycontent"><h1>Nada por aquí...</h1></div>
                                 <p></p>
@@ -88,7 +89,7 @@
                                            name = "dateformat"
                                            id = "absdate"
                                            value = "abs" />
-                                    <label id="abslabel" for = "absdate">completo</label>
+                                    <label id="abslabel" for = "absdate">absoluto</label>
                                 </p>
                                 <p>
                                     <label id="notfslabel">Notificaciones de escritorio (<a id="helpnotfs" href="#" data-toggle="tooltip" data-placement="bottom" title="Mostrar notificación cuando lleguen nuevos avisos">?</a>): </label>
@@ -121,8 +122,10 @@
                                     <label id="catlabel" for = "disablednotfs">catalán</label>
                                 </p>
                                 <br>
-                                <button id="clearstorage" type="button" class="btn btn-danger" data-loading-text="Datos borrados" data-toggle="tooltip" data-placement="right">Reiniciar aplicación</button>
-                                <button id="reauthorize" type="button" class="btn btn-danger" data-loading-text="Reautorizando" data-toggle="tooltip" data-placement="right">Reautorizar aplicación</button>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#clearmodal" id="openmodal2">Reiniciar aplicación</button>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reauthmodal" id="openmodal3">Reautorizar aplicación</button>
+                                <!--<button id="clearstorage" type="button" class="btn btn-danger" data-loading-text="Datos borrados" data-toggle="tooltip" data-placement="right">Reiniciar aplicación</button>-->
+                                <!--<button id="reauthorize" type="button" class="btn btn-danger" data-loading-text="Reautorizando" data-toggle="tooltip" data-placement="right">Reautorizar aplicación</button>-->
                                 <br>
                                 <p></p>
                             </div>
@@ -131,23 +134,61 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
+        <!-- Modal openlinks -->
         <div class="modal fade" id="suremodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="modaltitle" class="modal-title">¿Deseas abrir todos?</h3>
-              </div>
-                <div id="modalmsg" class="modal-body center-block">
-                  Si continúas, se abrirán <strong></strong> nuevas pestañas. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 id="modaltitle" class="modal-title">¿Deseas abrir todos?</h3>
+                    </div>
+                    <div id="modalmsg" class="modal-body center-block">
+                        Si continúas, se abrirán <strong></strong> nuevas pestañas. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.
+                    </div>
+                    <div class="modal-footer">
+                        <button id="modalno" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
+                        <button id="openlinks" type="button" class="btn btn-primary">Sí, continuar</button>
+                    </div>
                 </div>
-              <div class="modal-footer">
-                <button id="modalno" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
-                <button id="openlinks" type="button" class="btn btn-primary">Sí, continuar</button>
-              </div>
             </div>
-          </div>
+        </div>
+
+        <!-- Modal clearstorage -->
+        <div class="modal fade" id="clearmodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 id="modal2title" class="modal-title">¿Deseas continuar?</h3>
+                    </div>
+                    <div id="modal2msg" class="modal-body center-block">
+                        Si continúas, se borrarán todos los avisos guardados en la aplicación.
+                    </div>
+                    <div class="modal-footer">
+                        <button id="modal2no" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
+                        <button id="clearstorage" type="button" class="btn btn-danger">Sí, continuar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal reauthorize -->
+        <div class="modal fade" id="reauthmodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 id="modal3title" class="modal-title">¿Deseas continuar?</h3>
+                    </div>
+                    <div id="modal3msg" class="modal-body center-block">
+                        Si continúas, se volverá a pedir autorización para interactuar con la API del Racó.
+                    </div>
+                    <div class="modal-footer">
+                        <button id="modal3no" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
+                        <button id="reauthorize" type="button" class="btn btn-danger">Sí, continuar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

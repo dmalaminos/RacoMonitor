@@ -1,0 +1,72 @@
+var i18n_ca = {
+    "Nuevo aviso publicado": "Nou avís publicat",
+    "Nuevos avisos publicados": "Nous avisos publicats",
+    "Se ha publicado": "S'ha publicat",
+    "Se han publicado": "S'han publicat",
+    "y": "i",
+    "aviso": "avís",
+    "avisos": "avisos",
+    "de": "de",
+    "abrir aviso": "obrir avís",
+    "marcar como leído": "marcar com llegit",
+    "marcar como no leído": "marcar com no llegit",
+    "anterior": "anterior",
+    "siguiente": "següent",
+    "Últimos avisos": "Últims avisos",
+    "¿Deseas abrir todos?": "Desitges obrir tots?",
+    "No, cerrar": "No, tancar",
+    "Sí, continuar": "Sí, continuar",
+    "Si continúas, se abrirá": "Si continues, s\'obrirà",
+    "Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.": "Els avisos sense llegir es marcaran com llegits i apareixeran en la pestanya d\'avisos anteriors.",
+    "nueva pestaña.": "nova pestanya.",
+    "Si continúas, se abrirán": "Si continues, s\'obriran",
+    "nuevas pestañas.": "noves pestanyes.",
+    "Borrar datos almacenados y refrescar contenido": "Esborrar dades emmagatzemades i refrescar contingut",
+    "Reautorizar interacción con el Racó": "Re-autoritzar interacció amb el Racó",
+    "Los cambios se aplicarán al volver a abrir el popup": "Els canvis s'aplicaran en tornar a obrir el popup",
+    "No se ha autorizado esta aplicación para utilizar la API del Racó.": "No s\'ha autoritzat aquesta aplicació per utilitzar l\'API del Racó.",
+    "Reintentar": "Re-intentar",
+    "No se ha podido conectar con el Racó.": "No s\'ha pogut connectar amb el Racó.",
+    "¡Hay una nueva versión de RacoMonitor disponible!": "Hi ha una nova versió de RacoMonitor disponible!",
+    "Descargar": "Descarregar",
+    "Ir al Racó": "Anar al Racó",
+    "Abrir todos": "Obrir tots",
+    "Título ascendente": "Títol ascendent",
+    "Título descendente": "Títol descendent",
+    "Fecha ascendente": "Data ascendent",
+    "Fecha descendente": "Data descendent",
+    "Asignatura": "Assignatura",
+    "Refrescar": "Refrescar",
+    "Refrescando": "Refrescant",
+    "Formato de fecha": "Format de les dates",
+    "Tiempo transcurrido desde ahora o fecha completa de publicación": "Temps transcorregut des d\'ara o data completa de publicació",
+    "relativo": "relatiu",
+    "absoluto": "absolut",
+    "Notificaciones de escritorio": "Notificacions d\'escriptori",
+    "Mostrar notificación cuando lleguen nuevos avisos": "Mostrar notificació quan arribin nous avisos",
+    "activadas": "activades",
+    "desactivadas": "desactivades",
+    "castellano": "castellà",
+    "catalán": "català",
+    "Reiniciar aplicación": "Reiniciar aplicació",
+    "Reautorizar aplicación": "Re-autoritzar aplicació",
+    "Nada por aquí...": "Res per aquí...",
+    "Buscar nuevos avisos cada:": "Cercar nous avisos cada:",
+    "Avisos anteriores": "Avisos anteriors",
+    "Configuración": "Configuració",
+    "Datos borrados": "Dades esborrades",
+    "Reautorizando": "Reautoritzant",
+    "¿Deseas continuar?": "Desitges continuar?",
+    "Si continúas, se borrarán todos los avisos guardados en la aplicación.": "Si continues, s'esborraran tots els avisos guardats en l'aplicació.",
+    "Si continúas, se volverá a pedir autorización para interactuar con la API del Racó.": "Si continues, es tornarà a demanar autorització per interactuar amb l'API del Racó."
+};
+
+var locale = {
+    'cat': i18n_ca
+};
+
+function getText(str) {
+    var lang = localStorage.getItem('lang');
+    if (lang === 'cast') return str;
+    else return locale[lang] ? ((locale[lang])[str] ? (locale[lang])[str] : str) : str;
+}
