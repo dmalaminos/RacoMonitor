@@ -718,10 +718,14 @@ function writeTagsLang() {
     $('#notfslabel').html(getText("Notificaciones de escritorio")+' (<a id="helpnotfs" href="#" data-toggle="tooltip" data-placement="bottom" title=\"'+getText("Mostrar notificación cuando lleguen nuevos avisos")+'\">?</a>): ');
     $('#ennotfs').html(getText("activadas"));
     $('#disnotfs').html(getText("desactivadas"));
+    $('#helpnotfsnd').attr("title", getText("Reproducir sonido cuando lleguen nuevos avisos. Haz clic para escuchar una muestra"));
+    $('#notfsndlabel').html(getText("Sonido de notificación"));
+    $('#ennotfsnd').html(getText("activado"));
+    $('#disnotfsnd').html(getText("desactivado"));
     $('#castlabel').html(getText("castellano"));
     $('#catlabel').html(getText("catalán"));
-    $('#clearstorage').html(getText("Reiniciar aplicación"));
-    $('#openmodal2').html(getText("Reiniciar aplicación"));
+    $('#clearstorage').html(getText("Borrar datos"));
+    $('#openmodal2').html(getText("Borrar datos"));
     $('#reauthorize').html(getText("Reautorizar aplicación"));
     $('#openmodal3').html(getText("Reautorizar aplicación"));
 
@@ -735,7 +739,7 @@ function writeTagsLang() {
     $('#modal2title').html(getText('¿Deseas continuar?'));
     $('#modal2msg').html(getText('Si continúas, se borrarán todos los avisos guardados en la aplicación.'));
     $('#modal2no').html(getText('No, cerrar'));
-    $('#clearstorage').html(getText('Reiniciar aplicación'));
+    $('#clearstorage').html(getText('Borrar datos'));
     
     $('#modal3title').html(getText('¿Deseas continuar?'));
     $('#modal3msg').html(getText('Si continúas, se volverá a pedir autorización para interactuar con la API del Racó.'));
@@ -820,6 +824,21 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('desktopNotf', "en");
         chrome.extension.getBackgroundPage().showNotificationsConfig = true;
         $("#enablednotfs").attr("checked", "checked");
+    }
+    
+   //Notification sound
+    if (localStorage.getItem('notfSound')) {
+        if (localStorage.getItem('notfSound') === "en") {
+            chrome.extension.getBackgroundPage().soundNotificationsConfig = true;
+            $("#enablednotfsnd").attr("checked", "checked");
+        } else {
+            chrome.extension.getBackgroundPage().soundNotificationsConfig = false;
+            $("#disablednotfsnd").attr("checked", "checked");
+        }
+    } else {
+        localStorage.setItem('notfSound', "en");
+        chrome.extension.getBackgroundPage().soundNotificationsConfig = true;
+        $("#enablednotfsnd").attr("checked", "checked");
     }
     
     //Language config
@@ -1083,9 +1102,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 chrome.extension.getBackgroundPage().showNotificationsConfig = true;
             } else {
                 localStorage.setItem('desktopNotf', "dis");
-                relDate = false;
                 chrome.extension.getBackgroundPage().showNotificationsConfig = false;
             }
+        });
+        
+        //Notification sound radio buttons
+        $('input[name="notfsound"]').on('change', function() {
+            if ($(this).val() === 'notfsnd') {
+                localStorage.setItem('notfSound', "en");
+                chrome.extension.getBackgroundPage().soundNotificationsConfig = true;
+            } else {
+                localStorage.setItem('notfSound', "dis");
+                chrome.extension.getBackgroundPage().soundNotificationsConfig = false;
+            }
+        });
+        
+        $('#helpnotfsnd').click(function() {
+            var audio = new Audio('sounds/alarm.mp3');
+            audio.play();
         });
         
         //Language selector radio buttons
@@ -1108,6 +1142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         //$('#reauthorize').tooltip({title: getText("Reautorizar interacción con el Racó")});
         $('#helplang').tooltip({title: getText("Los cambios se aplicarán al volver a abrir el popup")});
         $('#helpnotfs').tooltip();
+        $('#helpnotfsnd').tooltip();
         $('#helpdate').tooltip();
         
         //Check for extension updates

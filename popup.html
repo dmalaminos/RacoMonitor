@@ -107,6 +107,22 @@
                                     <label id="disnotfs" for = "disablednotfs">desactivadas</label>
                                 </p>
                                 <p>
+                                    <label id="notfsndlabel">Sonido de notificación</label>
+                                    <label> (<a id="helpnotfsnd" href="#" data-toggle="tooltip" data-placement="bottom" title="Reproducir sonido cuando lleguen nuevos avisos. Haz clic para escuchar una muestra">?</a>): </label>
+                                    <input type = "radio"
+                                           name = "notfsound"
+                                           id = "enablednotfsnd"
+                                           value = "notfsnd"
+                                           checked = "checked" />
+                                    <label id="ennotfsnd" for = "enablednotfsnd">activado</label>
+
+                                    <input type = "radio"
+                                           name = "notfsound"
+                                           id = "disablednotfsnd"
+                                           value = "nonotfsnd" />
+                                    <label id="disnotfsnd" for = "disablednotfsnd">desactivado</label>
+                                </p>
+                                <p>
                                     <label id="langlabel">Idioma (<a id="helplang" href="#" data-toggle="tooltip" data-placement="bottom">?</a>): </label>
                                     <input type = "radio"
                                            name = "langselector"
@@ -124,8 +140,6 @@
                                 <br>
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#clearmodal" id="openmodal2">Reiniciar aplicación</button>
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reauthmodal" id="openmodal3">Reautorizar aplicación</button>
-                                <!--<button id="clearstorage" type="button" class="btn btn-danger" data-loading-text="Datos borrados" data-toggle="tooltip" data-placement="right">Reiniciar aplicación</button>-->
-                                <!--<button id="reauthorize" type="button" class="btn btn-danger" data-loading-text="Reautorizando" data-toggle="tooltip" data-placement="right">Reautorizar aplicación</button>-->
                                 <br>
                                 <p></p>
                             </div>

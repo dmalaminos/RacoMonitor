@@ -1,5 +1,7 @@
 var currentStatus = null;
 var showNotificationsConfig = true;
+var soundNotificationsConfig = true;
+var soundNotificacionsVolumeConfig = 1.0;
 var saveSlot = null;
 var firstTime = false;
 var alarmPeriod = 1;
@@ -385,7 +387,7 @@ function readFeed(data) {
     var readItems = [];
     var parser = new DOMParser();
     //debería de ser data.text.toString...
-    var xmlDoc = parser.parseFromString(data.text.toString(), "text/xml");
+    var xmlDoc = parser.parseFromString(data.toString(), "text/xml");
     //console.log(xmlDoc);
     
     var feedNodeList = xmlDoc.getElementsByTagName("item");
@@ -452,10 +454,17 @@ function validateItems(readItems, sendNews) {
             controlPort.postMessage({code: "livenewsfeed"});
         }
         
-        if (!firstTime && showNotificationsConfig) {
-            var notContent = generateNotContent(newItems);
-            showNotification(notContent);
-        }
+        if (!firstTime) {
+            if (showNotificationsConfig) {
+                var notContent = generateNotContent(newItems);
+                showNotification(notContent);
+            } 
+            if (soundNotificationsConfig) {
+                var audio = new Audio('sounds/alarm.mp3');
+                audio.volume = soundNotificacionsVolumeConfig;
+                audio.play();
+            }
+        }   
     }
     if (sendNews) currentStatus = null;
 }
@@ -490,7 +499,7 @@ chrome.runtime.onStartup.addListener(function () {
         periodInMinutes : alarmPeriod
     });
     chrome.alarms.create('checkUpdate', {
-        periodInMinutes : 60.0
+        periodInMinutes : 480.0
     });
 });
 
@@ -506,7 +515,7 @@ chrome.runtime.onInstalled.addListener(function(){
         periodInMinutes : alarmPeriod
     });
     chrome.alarms.create('checkUpdate', {
-        periodInMinutes : 60.0
+        periodInMinutes : 480.0
     });
 });
 

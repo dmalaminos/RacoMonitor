@@ -49,6 +49,7 @@ var i18n_ca = {
     "castellano": "castellà",
     "catalán": "català",
     "Reiniciar aplicación": "Reiniciar aplicació",
+    "Borrar datos": "Esborrar dades",
     "Reautorizar aplicación": "Re-autoritzar aplicació",
     "Nada por aquí...": "Res per aquí...",
     "Buscar nuevos avisos cada:": "Cercar nous avisos cada:",
@@ -58,7 +59,11 @@ var i18n_ca = {
     "Reautorizando": "Reautoritzant",
     "¿Deseas continuar?": "Desitges continuar?",
     "Si continúas, se borrarán todos los avisos guardados en la aplicación.": "Si continues, s'esborraran tots els avisos guardats en l'aplicació.",
-    "Si continúas, se volverá a pedir autorización para interactuar con la API del Racó.": "Si continues, es tornarà a demanar autorització per interactuar amb l'API del Racó."
+    "Si continúas, se volverá a pedir autorización para interactuar con la API del Racó.": "Si continues, es tornarà a demanar autorització per interactuar amb l'API del Racó.",
+    "Reproducir sonido cuando lleguen nuevos avisos. Haz clic para escuchar una muestra": "Reproduir so quan arribin nous avisos. Fes clic per escoltar una mostra",
+    "Sonido de notificación": "So de notificació",
+    "activado": "activat",
+    "desactivado": "desactivat"
 };
 
 var locale = {
