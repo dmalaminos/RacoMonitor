@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="css/jquery-ui-1.10.4.custom.min.css">
         <link rel="stylesheet" href="css/racomonitor.css">
+        <script type="text/javascript" src="js/i18n.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui-1.10.4.custom.min.js"></script>
         <script type="text/javascript" src="js/moment.js"></script>
@@ -88,7 +89,7 @@
                                            name = "dateformat"
                                            id = "absdate"
                                            value = "abs" />
-                                    <label id="abslabel" for = "absdate">completo</label>
+                                    <label id="abslabel" for = "absdate">absoluto</label>
                                 </p>
                                 <p>
                                     <label id="notfslabel">Notificaciones de escritorio (<a id="helpnotfs" href="#" data-toggle="tooltip" data-placement="bottom" title="Mostrar notificación cuando lleguen nuevos avisos">?</a>): </label>
@@ -147,7 +148,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
+        <!-- Modal openlinks -->
         <div class="modal fade" id="suremodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -164,6 +165,44 @@
               </div>
             </div>
           </div>
+        </div>
+        
+        <!-- Modal clearstorage -->
+        <div class="modal fade" id="clearmodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 id="modal2title" class="modal-title">¿Deseas continuar?</h3>
+                    </div>
+                    <div id="modal2msg" class="modal-body center-block">
+                        Si continúas, se borrarán todos los avisos guardados en la aplicación.
+                    </div>
+                    <div class="modal-footer">
+                        <button id="modal2no" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
+                        <button id="clearstorage" type="button" class="btn btn-danger">Sí, continuar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal reauthorize -->
+        <div class="modal fade" id="reauthmodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 id="modal3title" class="modal-title">¿Deseas continuar?</h3>
+                    </div>
+                    <div id="modal3msg" class="modal-body center-block">
+                        Si continúas, se volverá a pedir autorización para interactuar con la API del Racó.
+                    </div>
+                    <div class="modal-footer">
+                        <button id="modal3no" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
+                        <button id="reauthorize" type="button" class="btn btn-danger">Sí, continuar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

@@ -295,21 +295,18 @@ function showItem(item, end, still, read) {
     var plainCode = "<div class=\"list-group-item\" id=\""+item.id+"\"><span class=\"label label-"+labelColorPicker(item.parentC)+"\">";
     plainCode += item.parentC+"</span><span><h4 class=\"list-group-item-heading ellipsis\" style=\"width:450px; height:22px\"> ";
     plainCode += item.title+"</h4></span>";
-    plainCode += "<p class=\"list-group-item-text\"><a class=\"commonlink\" href=\"#racolink";
+    plainCode += "<p class=\"list-group-item-text\"><a class=\"commonlink\" href=\"#racolink\">";
+    plainCode += getText("abrir aviso");
     if (!read) {
-        if (localStorage.getItem('lang') === "cat") {
-            plainCode += "\">obrir avís</a> | <a href=\"#markread\">marcar com llegit</a></p><p class=\"list-group-item-text\">";
-        } else {
-            plainCode += "\">abrir aviso</a> | <a href=\"#markread\">marcar como leído</a></p><p class=\"list-group-item-text\">";
-        }
+        plainCode += "</a> | <a href=\"#markread\">";
+        plainCode += getText("marcar como leído");
     }
     else {
-        if (localStorage.getItem('lang') === "cat") {
-            plainCode += "\">obrir avís</a> | <a href=\"#unmarkread\">marcar com no llegit</a></p><p class=\"list-group-item-text\">";
-        } else {
-            plainCode += "\">abrir aviso</a> | <a href=\"#unmarkread\">marcar como no leído</a></p><p class=\"list-group-item-text\">";
-        }
+        plainCode += "</a> | <a href=\"#unmarkread\">";
+        plainCode += getText("marcar como no leído");
     }
+    plainCode += "</a></p><p class=\"list-group-item-text\">";
+    
     if (relDate) plainCode += moment(item.pubDate).fromNow()+"</p></div>";
     else plainCode += moment(item.pubDate).format("dddd, D [de] MMMM [de] YYYY, HH:mm:ss")+"</p></div>";
     doc.innerHTML += plainCode;
@@ -317,18 +314,16 @@ function showItem(item, end, still, read) {
         plainCode = "<ul class=\"pager\">";
         plainCode += "<li class=\"previous";
         if ((pageMarker === 0 && !read) || (archMarker === 0) && read) plainCode += " disabled";
-        if (read) plainCode += "\"><a class=\"prevarch\" href=\"#prev\">&larr; anterior</a></li>";
-        else plainCode += "\"><a class=\"prevfeed\" href=\"#prevfeed\">&larr; anterior</a></li>";
-        plainCode += "<li class=\"next";
+        if (read) plainCode += "\"><a class=\"prevarch\" href=\"#prev\">&larr; ";
+        else plainCode += "\"><a class=\"prevfeed\" href=\"#prevfeed\">&larr; ";
+        plainCode += getText("anterior");
+        plainCode += "</a></li><li class=\"next";
         if (still) plainCode += " disabled";
-        if (read) {
-            if (localStorage.getItem('lang') === "cat") plainCode += "\"><a class=\"nextarch\" href=\"#next\">següent &rarr;</a></li>";
-            else plainCode += "\"><a class=\"nextarch\" href=\"#next\">siguiente &rarr;</a></li>";
-        }
-        else {
-            if (localStorage.getItem('lang') === "cat") plainCode += "\"><a class=\"nextfeed\" href=\"#nextfeed\">següent &rarr;</a></li>";
-            else plainCode += "\"><a class=\"nextfeed\" href=\"#nextfeed\">siguiente &rarr;</a></li>";
-        }
+        if (read) plainCode += "\"><a class=\"nextarch\" href=\"#next\">";
+        else plainCode += "\"><a class=\"nextfeed\" href=\"#nextfeed\">";
+        plainCode += getText("siguiente");
+        plainCode += " &rarr;</a></li>";
+
         doc.innerHTML += plainCode;
         attachNavLinks(still, read);
     }
@@ -685,8 +680,7 @@ function refreshBadge(n) {
 
 function updateBadges(n) {
     refreshBadge(n);
-    if (localStorage.getItem('lang') === "cat") $("#tab1").html("Últims avisos <span class=\"badge\">"+n+"</span>");
-    else $("#tab1").html("Últimos avisos <span class=\"badge\">"+n+"</span>");
+    $("#tab1").html(getText("Últimos avisos")+" <span class=\"badge\">"+n+"</span>");
     if (n > 0) {
         $("#emptycontent").attr('style', "display: none;");
         $( "#toolbtns" ).removeAttr('style');
@@ -701,19 +695,22 @@ function updateBadges(n) {
     }
 }
 
-function changeToCat() {
-    $('#authalert').html('No s\'ha autoritzat aquesta aplicació per utilitzar l\'API del Racó. <a href=\"#\" id=\"authlink\" class=\"alert-link\">Re-intentar</a>.');
-    $('#connalert').html('No s\'ha pogut connectar amb el Racó.');
-    $('#versioninfo').html('<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>Hi ha una nova versió de RacoMonitor disponible! <a href=\"https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip\" target=\"_blank\" class=\"alert-link\">Descarregar</a>')
+function writeTagsLang() {
+    $('#authalert').html(getText("No se ha autorizado esta aplicación para utilizar la API del Racó.") + ' <a href=\"#\" id=\"authlink\" class=\"alert-link\">'+ getText("Reintentar") +'</a>.');
+    $('#connalert').html(getText('No se ha podido conectar con el Racó.'));
+    $('#versioninfo').html('<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>'+getText("¡Hay una nueva versión de RacoMonitor disponible!")+' <a href=\"https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip\" target=\"_blank\" class=\"alert-link\">'+getText("Descargar")+'</a>');
     
-    $('#goraco').html('Anar al Racó');
-    $('#openmodal').html('Obrir tots');
-    $('#sorttasc').html('Títol ascendent');
-    $('#sorttdesc').html('Títol descendent');
-    $('#sortdasc').html('Data ascendent');
-    $('#sortddesc').html('Data descendent');
-    $('#sortcour').html('Assignatura');
-    $('#refreshbtn').attr("data-loading-text", "Refrescant");
+    $('#goraco').html(getText("Ir al Racó"));
+    $('#openmodal').html(getText("Abrir todos"));
+    $('#sorttasc').html(getText("Título ascendente"));
+    $('#sorttdesc').html(getText("Título descendente"));
+    $('#sortdasc').html(getText("Fecha ascendente"));
+    $('#sortddesc').html(getText("Fecha descendente"));
+    $('#sortcour').html(getText("Asignatura"));
+    $('#refreshbtn').html(getText("Refrescar"));
+    $('#refreshbtn').attr("data-loading-text", getText("Refrescando"));
+    $('#openmodal2').attr("data-loading-text", getText("Datos borrados"));
+    $('#openmodal3').attr("data-loading-text", getText("Reautorizando"));
 
     $('#dataformat').html(getText("Formato de fecha")+' (<a id="helpdate" href="#" data-toggle="tooltip" data-placement="top" title=\"'+getText("Tiempo transcurrido desde ahora o fecha completa de publicación")+'\">\?</a>): ');
     $('#rellabel').html(getText("relativo"));
@@ -1028,15 +1025,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 n = archCach.content.length;
             }
             
-            if (localStorage.getItem('lang') === "cat") {
-                $('#modaltitle').html('Desitges obrir tots?');
-                $('#modalno').html('No, tancar');
-                if (n === 1) $('#modalmsg').html('Si continues, s\'obrirà <strong>'+n+'</strong> nova pestanya. Els avisos sense llegir es marcaran com llegits i apareixeran en la pestanya d\'avisos anteriors.');
-                else $('#modalmsg').html('Si continues, s\'obriran <strong>'+n+'</strong> noves pestanyes. Els avisos sense llegir es marcaran com llegits i apareixeran en la pestanya d\'avisos anteriors.');
-            } else {
-                if (n === 1) $('#modalmsg').html('Si continúas, se abrirá <strong>'+n+'</strong> nueva pestaña. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.');
-                else $('#modalmsg').html('Si continúas, se abrirán <strong>'+n+'</strong> nuevas pestañas. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.');
-            }
+            $('#modaltitle').html(getText('¿Deseas abrir todos?'));
+            $('#modalno').html(getText('No, cerrar'));
+            $('#openlinks').html(getText('Sí, continuar'));
+
+            if (n === 1) $('#modalmsg').html(getText('Si continúas, se abrirá')+' <strong>'+n+'</strong> '+getText('nueva pestaña.')+' '+getText('Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.'));
+            else $('#modalmsg').html(getText('Si continúas, se abrirán')+' <strong>'+n+'</strong> '+getText('nuevas pestañas.')+' '+getText('Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.'));
         });
         
         //Refresh content button
@@ -1057,17 +1051,21 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#clearstorage').click(function() {
             var btn = $(this);
             chrome.extension.getBackgroundPage().clearStorageData();
-            btn.button('loading');
+            //btn.button('loading');
             cacheInvalidate(feedCach);
             cacheInvalidate(archCach);
-            requestRefreshAndLoad();
+            //requestRefreshAndLoad();
+            $('#openmodal2').button('loading');
+            $('#clearmodal').modal('hide');
         });
         
         //Reauthorize button
         $('#reauthorize').click(function() {
             var btn = $(this);
-            btn.button('loading');
+            //btn.button('loading');
             chrome.extension.getBackgroundPage().oAuthorize();
+            $('#openmodal3').button('loading');
+            $('#clearmodal').modal('hide');
         });
         
         //Alarm value slider
@@ -1134,22 +1132,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         //Tooltips and language
-        if (localStorage.getItem('lang') === "cat") {
-            changeToCat();
-            $('#authlink').click(function() {
-                chrome.extension.getBackgroundPage().oAuthorize();
-            });
-            $('#clearstorage').tooltip({title: "Esborrar dades emmagatzemades i refrescar contingut"});
-            $('#reauthorize').tooltip({title: "Re-autoritzar interacció amb el Racó"});
-            $('#helplang').tooltip({title: "Els canvis s'aplicaran en tornar a obrir el popup"});
-            moment.lang('ca');
-            
-        } else {
-            $('#clearstorage').tooltip({title: "Borrar datos almacenados y refrescar contenido"});
-            $('#reauthorize').tooltip({title: "Reautorizar interacción con el Racó"});
-            $('#helplang').tooltip({title: "Los cambios se aplicarán al volver a abrir el popup"});
-            moment.lang('es');
-        }
+        writeTagsLang();
+        if (localStorage.getItem('lang') === "cat") moment.lang('ca'); 
+        else moment.lang('es');
+        $('#authlink').click(function() {
+            chrome.extension.getBackgroundPage().oAuthorize();
+        });
+        //$('#clearstorage').tooltip({title: getText("Borrar datos almacenados y refrescar contenido")});
+        //$('#reauthorize').tooltip({title: getText("Reautorizar interacción con el Racó")});
+        $('#helplang').tooltip({title: getText("Los cambios se aplicarán al volver a abrir el popup")});
         $('#helpnotfs').tooltip();
         $('#helpnotfsnd').tooltip();
         $('#helpdate').tooltip();
