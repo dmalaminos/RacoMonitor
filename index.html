@@ -1,1 +1,193 @@
-My GitHub page test...
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>RacóMonitor</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="https://dl.dropboxusercontent.com/s/iyqk5lvnfs3qle3/bootstrap.css">
+        <script type="text/javascript" src="https://dl.dropboxusercontent.com/s/aeekzyt08ibte6c/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="https://dl.dropboxusercontent.com/s/3ktuzux5s2ryb0c/bootstrap.js"></script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-54517366-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </head>
+    <body>
+        <div class="container center-block">
+            <div class="row">
+                <div class="col-xs-9 col-md-offset-1">
+                    <div class="page-header">
+                        <h1>RacóMonitor <small>Gestor de notificaciones para el Racó de la FIB</small></h1>
+                    </div>
+                    <div>
+                        <nav id="mainnavbar" class="navbar navbar-default navbar-static" role="navigation">
+                            <div class="container-fluid">
+                                <div class="collapse navbar-collapse">
+                                    <ul class="nav navbar-nav">
+                                        <li class=""><a href="#about">Acerca de...</a></li>
+                                        <li class=""><a href="#install">Instalación</a></li>
+                                        <li class=""><a href="#usage">Uso</a></li>
+                                        <li class=""><a href="#faq">FAQ</a></li>
+                                        <li class=""><a href="#changelog">Changelog</a></li>
+                                        <li class=""><a href="#licence">Licencia</a></li>
+                                        <li class=""><a href="#contact">Contacto</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+
+                        <div id="maincontent" data-target="#mainnavbar" data-offset="0">
+                            <br/>
+                            <h3 id="about">Acerca de...</h3>
+                            <p>RacóMonitor es una extensión para Chrome que gestiona los avisos del Racó de la FIB (UPC) y lanza notificaciones cuando se publican nuevos avisos. Pretende mejorar la eficiencia del usuario facilitando accesos rápidos a los avisos, que pueden ser ordenados según diferentes criterios. Gracias a las notificaciones, que avisan casi instantáneamente cuando se publican nuevos avisos, también le dará un descanso a la tecla F5.</p>
+                            <p>El núcleo de la aplicación está programado en JavaScript, con las librerías <a href="https://jquery.org/" target="_blank">jQuery</a> y <a href="http://bytespider.github.io/jsOAuth/" target="_blank">jsOAuth</a>. Además, también utiliza la librería <a href="http://momentjs.com/" target="_blank">Moment.js</a> y <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> para la interfaz de usuario.</p>
+                            <br/><br/>
+
+                            <h3 id="install">Instalación</h3>
+                            <p>Para empezar, necesitarás descargar la extensión (.crx), que puedes encontrar comprimida en <a href="https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip" target="_blank">este enlace</a>.</p>
+                            <p>A partir de finales de mayo de 2014, Google impuso a Chrome para Windows que no pudiera instalar extensiones locales, descargadas fuera de la Web Store; aún así, todavía es posible instalar una extensión de forma local activando el "modo de desarrollador", como se explica más abajo. Esta limitación por ahora no afecta a usuarios de otros sistemas operativos.</p>
+                            <p>Los dos primeros métodos representan la manera más sencilla de instalar RacóMonitor en Windows y Linux, respectivamente. El segundo también debería de funcionar para Mac. El tercer método es una alternativa que funciona para cualquier SO.</p>
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                                Método #1 (recomendado)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>Abre una nueva pestaña en Chrome con la dirección “chrome://extensions/” (también se puede acceder desde Herramientas>Extensiones)</li>
+                                                <li>Asegúrate que esté activada la casilla “Modo de desarrollador”, en el margen superior</li>
+                                                <li>Arrastra el fichero RacoMonitor.crx dentro de la navegador</li>
+                                                <li>Se abrirá una nueva pestaña mostrando la página habitual de login del Racó, si tu sesión de usuario no estaba previamente abierta. Aparecerá una pantalla pidiendo permiso para utilizar la API interna. De todos los datos que informa que se podrán acceder, RacoMonitor sólo accederá a los avisos más recientes</li>
+                                                <li>Una vez se ha dado permiso, aparecerá un mensaje. Para terminar el proceso de autorización es <b>importante</b> que cierres esta pestaña</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                                Método #2 (recomendado para Linux)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse2" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>Abre una nueva pestaña en Chrome con la dirección “chrome://extensions/” (también se puede acceder desde Herramientas>Extensiones)</li>
+                                                <li>Arrastra el fichero RacoMonitor.crx dentro de la navegador</li>
+                                                <li>Se abrirá una nueva pestaña mostrando la página habitual de login del Racó, si tu sesión de usuario no estaba previamente abierta. Aparecerá una pantalla pidiendo permiso para utilizar la API interna. De todos los datos que informa que se podrán acceder, RacoMonitor sólo accederá a los avisos más recientes</li>
+                                                <li>Una vez se ha dado permiso, aparecerá un mensaje. Para terminar el proceso de autorización es <b>importante</b> que cierres esta pestaña</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                                                Método #3
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>Descomprime el archivo RacoMonitor.crx en un directorio de tu sistema; ten en cuenta que el directorio y sus contenidos deberán de permanecer ahí mientras quieras utilizar la extensión</li>
+                                                <li>Abre una nueva pestaña en Chrome con la dirección “chrome://extensions/” (también se puede acceder desde Herramientas>Extensiones)</li>
+                                                <li>Asegúrate que esté activado el checkbox “Modo de desarrollador”, en el margen superior</li>
+                                                <li>Utiliza la opción para cargar la extensión descomprimida en el directorio del paso 1</li>
+                                                <li>Se abrirá una nueva pestaña mostrando la página habitual de login del Racó, si tu sesión de usuario no estaba previamente abierta. Aparecerá una pantalla pidiendo permiso para utilizar la API interna. De todos los datos que informa que se podrán acceder, RacoMonitor sólo accederá a los avisos más recientes</li>
+                                                <li>Una vez se ha dado permiso, aparecerá un mensaje. Para terminar el proceso de autorización es <b>importante</b> que cierres esta pestaña</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/><br/>
+
+
+                            <h3 id="usage">Uso</h3>
+                            <p>Una vez instalado correctamente, se añadirá un icono con el logo de la FIB en la toolbar. Haciendo clic sobre éste aparecerá un popup con tres pestañas: últimos avisos (avisos no leídos), avisos anteriores (avisos leídos) y configuración.</p>
+                            <ul>
+                                <li><b>Últimos avisos:</b> aquí aparecerán los avisos que no hayas leído. También aparecerá una barra superior con un acceso directo al Racó, un botón para abrir todos los avisos (y en el caso de no estar leídos, marcarlos como tal), y un desplegable con opciones para ordenar los avisos. Además, hay un botón para refrescar, aunque cada vez que se abre el popup ya se comprueba automáticamente si se han publicado nuevos avisos.</li>
+                                <li><b>Avisos anteriores:</b> aquí aparecerán los avisos que hayan sido marcados como leídos, junto con la misma barra superior que en la pestaña anterior.</li>
+                                <li><b>Configuración:</b> presenta las opciones personalizables de la extensión.
+                                    <ul>
+                                        <li>Frecuencia de refresco: cada cuánto tiempo comprueba si hay nuevos avisos, entre un minuto y una hora.</li>
+                                        <li>Formato de la fecha: relativo (p.e. <i>hace 2 horas</i>) o absoluto (p.e. <i>miércoles, 19 de mayo de 2014, 23:49:01</i>).</li>
+                                        <li>Notificaciones de escritorio: si el navegador debe lanzar una notificación cuando haya llegado un nuevo aviso.</li>
+                                        <li>Sonido de notificación: si debe reproducir un sonido cuando haya llegado un nuevo aviso.</li>
+                                        <li>Idioma: a elegir entre castellano y catalán.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <br/><br/>
+
+
+                            <h3 id="faq">FAQ (Preguntas frecuentes)</h3>
+                            <h4 id="q1">¿Qué versión de RacóMonitor tengo instalada?</h4>
+                            <p>Abre una nueva pestaña en Chrome con la dirección “chrome://extensions/” (también se puede acceder desde Herramientas>Extensiones). El número de versión aparecerá junto al título de RacóMonitor.</p>
+                            <h4 id="q2">¿Cómo puedo cambiar el sonido de notificación?</h4>
+                            <p>Si instalaste la extensión mediante el método #3, puedes ir a la carpeta de RacóMonitor que descomprimiste, entrar al directorio <i>sounds</i> y reemplazar el archivo <i>alarm.mp3</i> por el sonido que quieras. Si utilizaste otro método, deberás de extraer el contenido de RacoMonitor.crx en una carpeta, substituir el archivo de sonido como se indicaba antes y volver a comprimir la carpeta con el formato crx. Para hacer esto último, puedes ir a la página de extensiones (“chrome://extensions/”) y utilizar la opción <i>Empaquetar extensión</i>.</p>
+                            <h4 id="q3">¿Cómo accede la extensión a mi perfil del Racó?</h4>
+                            <p>RacóMonitor no accede a tu perfil directamente, sino que usa la API privada del Racó, con la que el usuario da permiso durante el proceso de autorización. En ese momento, una pantalla informa que la extensión podrá acceder a avisos, horario, calendario... pero realmente sólo se utilizan los avisos más recientes, concretamente el archivo <i>/api-v1/avisos.rss</i>. Puedes encontrar más información sobre la API del Racó <a href="https://raco.fib.upc.edu/oauth/gestio-api/api.jsp" target="_blank">aquí</a>.</p>
+                            <h4 id="q4">¿Cómo puedo revocar el acceso a la API del Racó para una aplicación?</h4>
+                            <p>Dirígete a <a href="https://raco.fib.upc.edu/oauth/gestio-api/revoke.jsp" target="_blank">esta página</a>, donde podrás ver a qué aplicaciones has dado permisos y revocarlos si es necesario.</p>
+                            <h4 id="q5">¿Por qué me llegan avisos repetidos —con el mismo título?</h4>
+                            <p>Esto ocurre porque los profesores han actualizado el aviso añadiendo, modificando o eliminando contenido. Aunque no suelen cambiar el título en estas situaciones, la extensión detecta que el contenido es diferente y lo muestra como un nuevo aviso con el mismo título pero con la fecha de publicación modificada. A algunos profes les gusta ir actualizando el aviso a medida que lo van escribiendo, hay que tener un poco de paciencia :)</p>
+                            <h4 id="q6">¿Por qué la extensión requiere permiso para acceder a Dropbox?</h4>
+                            <p>Chrome informa que la extensión requiere permisos para "acceder a tus datos en www.dropbox.com" porque RacóMonitor necesita comprobar periódicamente un archivo de texto alojado en Dropbox, que servirá para avisar cuando haya nuevas versiones. Realmente nunca va a acceder a tus datos personales, pero necesita este permiso para acceder al dominio de Dropbox.</p>
+                            <h4 id="q7">¿Por qué debería de borrar los datos de avisos anteriores al empezar un nuevo cuatrimestre?</h4>
+                            <p>La extensión está ideada para que trabaje con los avisos de asignaturas de un solo cuatrimestre. Si no se hace así es posible que siga funcionando, pero su comportamiento no ha sido testado. Además, los links al Racó de avisos de otro cuatri habrán dejado de funcionar, por lo que no tiene mucha utilidad conservar los avisos en memoria. Puedes borrarlos usando el botón "Borrar datos" en la pestaña de Configuración.</p>
+
+                            <br/><br/>
+                            <h3 id="changelog">Changelog</h3>
+                            <dl class="dl-horizontal">
+                                <dt>1.0.3</dt>
+                                <dd>
+                                    <p>añadida opción para reproducir sonido cuando lleguen nuevos avisos</p>
+                                    <p>mejorado el código de i18n, más modularizado</p>
+                                    <p>corregido bug que impedía lanzar notificaciones correctamente</p>
+                                    <p>añadido nuevo icono para las notificaciones</p>
+                                    <p>añadidas ventanas de confirmación para los botones "Borrar datos" y "Reautorizar aplicación"</p>
+                                </dd>
+                                <dt>1.0.2</dt>
+                                <dd>
+                                    <p>corregido bug en avisos con títulos largos, ahora muestra una elipsis cuando no cabe el título entero</p>
+                                    <p>añadida una ventana de confirmación antes de abrir links de avisos desde el botón "Abrir todos"</p>
+                                    <p>añadida comprobación de nuevas actualizaciones, ahora mostrará un aviso dentro del popup cuando haya nuevas actualizaciones disponibles</p>
+                                </dd>
+                                <dt>1.0.1</dt>
+                                <dd><p>añadido soporte para interfaz en catalán</p></dd>
+                                <dt>1.0</dt>
+                                <dd><p>extensión funcional</p></dd>
+                            </dl>
+                            <br/><br/>
+
+
+                            <h3 id="licence">Licencia</h3>
+                            <p>RacóMonitor está publicado bajo una licencia <a href="https://www.tldrlegal.com/l/gpl-3.0" target="_blank">GPL-3</a>. Puedes examinar y descargar el código fuente desde su repositorio en <a href="https://github.com/stjernaluiht/RacoMonitor" target="_blank">GitHub</a>.</p>
+                            <br/><br/>
+
+
+                            <h3 id="contact">Contacto</h3>
+                            <p>Puedes contactar conmigo enviándome un mail a <a href="mailto:david.martin.alaminos@est.fib.upc.edu" target="_blank">david.martin.alaminos@est.fib.upc.edu</a>.</p>
+                            <br/><br/><br/><br/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
