@@ -699,7 +699,7 @@ function writeTagsLang() {
     $('#authalert').html(getText("No se ha autorizado esta aplicación para utilizar la API del Racó.") + ' <a href=\"#\" id=\"authlink\" class=\"alert-link\">'+ getText("Reintentar") +'</a>.');
     $('#connalert').html(getText('No se ha podido conectar con el Racó.'));
     $('#versioninfo').html(getText("¡Hay una nueva versión de RacoMonitor disponible!")+' <a href=\"https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip\" target=\"_blank\" class=\"alert-link\">'+getText("Descargar")+'</a>');
-    $('#newqalert').html('<button type="button" class="close" data-dismiss="alert"><span class="closeBtn" aria-hidden="true">&times;</span></button>'+getText("Recomendamos borrar los datos de avisos anteriores al empezar un nuevo cuatrimestre.")+' <a href=\"https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html#q7\" id=\"newqinfo\" target=\"_blank\" class=\"alert-link\"> '+getText("Más información")+' '+getText("aquí")+'</a>.');   
+    $('#newqalert').html('<button type="button" class="close" data-dismiss="alert"><span class="closeBtn" aria-hidden="true">&times;</span></button>'+getText("Recomendamos borrar los datos de avisos anteriores al empezar un nuevo cuatrimestre.")+' <a href=\"http://stjernaluiht.github.io/RacoMonitor/#q7\" id=\"newqinfo\" target=\"_blank\" class=\"alert-link\"> '+getText("Más información")+' '+getText("aquí")+'</a>.');   
     $('#clanginfo').html('<button type="button" class="close" data-dismiss="alert"><span class="closeBtn" aria-hidden="true">&times;</span></button>'+getText("El cambio de idioma se aplicará al volver a abrir el popup.")); 
     $('#goraco').html(getText("Ir al Racó"));
     $('#openmodal').html(getText("Abrir todos"));
@@ -888,7 +888,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         //New course link
         $('#newqinfo').click(function() {
-            chrome.tabs.create({url: "https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html#q7"});
+            chrome.tabs.create({url: "http://stjernaluiht.github.io/RacoMonitor/#q7"});
         });
         
         //Item links
@@ -1154,7 +1154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         //More info button
         $('#rminfo').click(function() {
-            chrome.tabs.create({ url: "https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html" });
+            chrome.tabs.create({ url: "http://stjernaluiht.github.io/RacoMonitor/" });
         });
         
         //Tooltips and language

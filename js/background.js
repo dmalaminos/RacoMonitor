@@ -497,7 +497,7 @@ chrome.runtime.onStartup.addListener(function () {
 chrome.runtime.onInstalled.addListener(function(){
     console.log("INSTALLED");
     
-    chrome.tabs.create({url: "https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html#changelog"});
+    chrome.tabs.create({url: "http://stjernaluiht.github.io/RacoMonitor/#changelog"});
     
     firstTime = true;
     if (oauthStatus) {
