@@ -19,10 +19,10 @@ button {
     width: 110px;
 }
 #clearstorage {
-    width: 150px;
+    width: 130px;
 }
 #openmodal2 {
-    width: 150px;
+    width: 130px;
 }
 #openmodal3 {
     width: 170px;
@@ -31,9 +31,16 @@ button {
 #reauthorize {
     width: 170px;
 }
+#rminfo {
+    float: right !important;
+    width: 135px;
+}
 .ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
+}
+.closeBtn {
+    float: right !important;
 }

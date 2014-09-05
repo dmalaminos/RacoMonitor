@@ -387,7 +387,7 @@ function readFeed(data) {
     var readItems = [];
     var parser = new DOMParser();
     //debería de ser data.text.toString...
-    var xmlDoc = parser.parseFromString(data.toString(), "text/xml");
+    var xmlDoc = parser.parseFromString(data.text.toString(), "text/xml");
     //console.log(xmlDoc);
     
     var feedNodeList = xmlDoc.getElementsByTagName("item");
@@ -471,16 +471,7 @@ function validateItems(readItems, sendNews) {
 
 function checkFeedNow() {
     console.log("Checking news @ "+moment().format('MMMM Do YYYY, h:mm:ss a'));
-    //getFeed();
-    
-    var req = new XMLHttpRequest();
-    req.open('GET', 'rss_avisos.rss', false); 
-    req.send(null);
-    if(req.status === 200) {
-        //console.log(req.responseText);
-        readFeed(req.responseText);
-    }
-    else console.error("Nope. "+req.status);
+    getFeed();
 }
 
 
@@ -505,6 +496,9 @@ chrome.runtime.onStartup.addListener(function () {
 
 chrome.runtime.onInstalled.addListener(function(){
     console.log("INSTALLED");
+    
+    chrome.tabs.create({url: "https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html#changelog"});
+    
     firstTime = true;
     if (oauthStatus) {
         flushCondition = false;

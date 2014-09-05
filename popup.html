@@ -32,32 +32,37 @@
                         </ul>
                         <div class="tab-content">
                             <p></p>
-                            <div id="authalert" class="alert alert-danger" style="display: none;">No se ha autorizado esta aplicación para utilizar la API del Racó. <a href="#" id="authlink" class="alert-link">Reintentar</a>.</div>
-                            <div id="connalert" class="alert alert-warning" style="display: none;">No se ha podido conectar con el Racó.</div>
-                            <div id="versioninfo" class="alert alert-info alert-dismissable" style="display: none;">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                ¡Hay una nueva versión de RacoMonitor disponible! <a href="https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip" target="_blank" class="alert-link">Descargar</a>
+                            <div id="authalert" class="alert alert-danger fade in" style="display: none;">No se ha autorizado esta aplicación para utilizar la API del Racó. <a href="#" id="authlink" class="alert-link">Reintentar</a>.</div>
+                            <div id="connalert" class="alert alert-warning fade in" style="display: none;">No se ha podido conectar con el Racó.</div>
+                            <div id="versioninfo" class="alert alert-info fade in" style="display: none;">¡Hay una nueva versión de RacoMonitor disponible! <a href="https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip" target="_blank" class="alert-link">Descargar</a></div>
+                            <div id="clanginfo" class="alert alert-info alert-dismissible fade in" style="display: none;">
+                                <button type="button" class="close" data-dismiss="alert"><span class="closeBtn" aria-hidden="true">&times;</span></button>
+                                El cambio de idioma se aplicará al volver a abrir el popup.
+                            </div>
+                            <div id="newqalert" class="alert alert-warning alert-dismissible fade in" style="display: none;">
+                                <button type="button" class="close" data-dismiss="alert"><span class="closeBtn" aria-hidden="true">&times;</span></button>
+                                Recomendamos borrar los datos de avisos anteriores al empezar un nuevo cuatrimestre. <a href="#" id="newqinfo" class="alert-link">Más información aquí</a>.
                             </div>
                             <div id="toolbtns">
-                                    <button type="button" class="btn btn-info" id="goraco">Ir al Racó</button>
-                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#suremodal" id="openmodal">Abrir todos</button>
-                                    <div id="sorter" class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                            Ordenar <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a id="sorttasc" href="#">Título ascendente</a></li>
-                                            <li><a id="sorttdesc" href="#">Título descendente</a></li>
-                                            <li class="divider"></li>
-                                            <li><a id="sortdasc" href="#">Fecha ascendente</a></li>
-                                            <li><a id="sortddesc" href="#">Fecha descendente</a></li>
-                                            <li class="divider"></li>
-                                            <li><a id="sortcour" href="#">Asignatura</a></li>
-                                        </ul>
-                                    </div>
-                                    <button id="refreshbtn" type="button" class="btn btn-primary" data-loading-text="Refrescando">Refrescar</button>
-                                    <p></p>
+                                <button type="button" class="btn btn-info" id="goraco">Ir al Racó</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#suremodal" id="openmodal">Abrir todos</button>
+                                <div id="sorter" class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        Ordenar <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a id="sorttasc" href="#">Título ascendente</a></li>
+                                        <li><a id="sorttdesc" href="#">Título descendente</a></li>
+                                        <li class="divider"></li>
+                                        <li><a id="sortdasc" href="#">Fecha ascendente</a></li>
+                                        <li><a id="sortddesc" href="#">Fecha descendente</a></li>
+                                        <li class="divider"></li>
+                                        <li><a id="sortcour" href="#">Asignatura</a></li>
+                                    </ul>
                                 </div>
+                                <button id="refreshbtn" type="button" class="btn btn-primary" data-loading-text="Refrescando">Refrescar</button>
+                                <p></p>
+                            </div>
                             <div class="tab-pane fade in active" id="panel-670599">
                                 <div id="emptycontent"><h1>Nada por aquí...</h1></div>
                                 <p></p>
@@ -140,6 +145,7 @@
                                 <br>
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#clearmodal" id="openmodal2">Reiniciar aplicación</button>
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reauthmodal" id="openmodal3">Reautorizar aplicación</button>
+                                <button type="button" class="btn btn-default" id="rminfo">Más información</button>
                                 <br>
                                 <p></p>
                             </div>
@@ -150,23 +156,23 @@
         </div>
         <!-- Modal openlinks -->
         <div class="modal fade" id="suremodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="modaltitle" class="modal-title">¿Deseas abrir todos?</h3>
-              </div>
-                <div id="modalmsg" class="modal-body center-block">
-                  Si continúas, se abrirán <strong></strong> nuevas pestañas. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 id="modaltitle" class="modal-title">¿Deseas abrir todos?</h3>
+                    </div>
+                    <div id="modalmsg" class="modal-body center-block">
+                        Si continúas, se abrirán <strong></strong> nuevas pestañas. Los avisos sin leer se marcarán como leídos y aparecerán en la pestaña de avisos anteriores.
+                    </div>
+                    <div class="modal-footer">
+                        <button id="modalno" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
+                        <button id="openlinks" type="button" class="btn btn-primary">Sí, continuar</button>
+                    </div>
                 </div>
-              <div class="modal-footer">
-                <button id="modalno" type="button" class="btn btn-default" data-dismiss="modal">No, cerrar</button>
-                <button id="openlinks" type="button" class="btn btn-primary">Sí, continuar</button>
-              </div>
             </div>
-          </div>
         </div>
-        
+
         <!-- Modal clearstorage -->
         <div class="modal fade" id="clearmodal" tabindex="-1" role="dialog" aria-labelledby="modaltitle" aria-hidden="true">
             <div class="modal-dialog">

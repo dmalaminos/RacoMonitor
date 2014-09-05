@@ -646,10 +646,10 @@ function checkRMVersion() {
         if (oRequest.readyState === 4) {  
             if (oRequest.status === 200) {  
               //console.log(oRequest.responseText);
-        } else {  
-          console.log("XMLHttp error", oRequest.statusText);  
-        }
-      }  
+            } else {  
+                console.log("XMLHttp error", oRequest.statusText);  
+            }
+        }  
     };
     
     try {
@@ -698,8 +698,9 @@ function updateBadges(n) {
 function writeTagsLang() {
     $('#authalert').html(getText("No se ha autorizado esta aplicación para utilizar la API del Racó.") + ' <a href=\"#\" id=\"authlink\" class=\"alert-link\">'+ getText("Reintentar") +'</a>.');
     $('#connalert').html(getText('No se ha podido conectar con el Racó.'));
-    $('#versioninfo').html('<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>'+getText("¡Hay una nueva versión de RacoMonitor disponible!")+' <a href=\"https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip\" target=\"_blank\" class=\"alert-link\">'+getText("Descargar")+'</a>');
-    
+    $('#versioninfo').html(getText("¡Hay una nueva versión de RacoMonitor disponible!")+' <a href=\"https://www.dropbox.com/s/xnaqbayua5wnpj2/RacoMonitor.zip\" target=\"_blank\" class=\"alert-link\">'+getText("Descargar")+'</a>');
+    $('#newqalert').html('<button type="button" class="close" data-dismiss="alert"><span class="closeBtn" aria-hidden="true">&times;</span></button>'+getText("Recomendamos borrar los datos de avisos anteriores al empezar un nuevo cuatrimestre.")+' <a href=\"https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html#q7\" id=\"newqinfo\" target=\"_blank\" class=\"alert-link\"> '+getText("Más información")+' '+getText("aquí")+'</a>.');   
+    $('#clanginfo').html('<button type="button" class="close" data-dismiss="alert"><span class="closeBtn" aria-hidden="true">&times;</span></button>'+getText("El cambio de idioma se aplicará al volver a abrir el popup.")); 
     $('#goraco').html(getText("Ir al Racó"));
     $('#openmodal').html(getText("Abrir todos"));
     $('#sorttasc').html(getText("Título ascendente"));
@@ -745,6 +746,7 @@ function writeTagsLang() {
     $('#modal3msg').html(getText('Si continúas, se volverá a pedir autorización para interactuar con la API del Racó.'));
     $('#modal3no').html(getText('No, cerrar'));
     $('#reauthorize').html(getText('Reautorizar aplicación'));
+    $('#rminfo').html(getText("Más información"));
 }
 
 /**
@@ -863,12 +865,30 @@ document.addEventListener('DOMContentLoaded', function() {
         $("#connalert").attr('style', "display: none;");
     } else $("#connalert").removeAttr('style');
     
+    //New course alert
+    var lastErase;
+    if (localStorage.getItem('lastErase')) {
+        lastErase = localStorage.getItem('lastErase');
+    } else {
+        lastErase = moment(0).unix(); 
+        localStorage.setItem('lastErase', lastErase);     
+    }
+    var curM = moment().month();
+    if (((curM >= 2 && curM <= 3) || (curM >= 7 && curM <= 10)) && moment(lastErase).isBefore()) {
+        $("#newqalert").removeAttr('style');
+    }
+    
     ///////////////
     ///////////////
     $(document).ready(function() {
         //Authorization link
         $('#authlink').click(function() {
             chrome.extension.getBackgroundPage().oAuthorize();
+        });
+        
+        //New course link
+        $('#newqinfo').click(function() {
+            chrome.tabs.create({url: "https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html#q7"});
         });
         
         //Item links
@@ -1051,10 +1071,11 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#clearstorage').click(function() {
             var btn = $(this);
             chrome.extension.getBackgroundPage().clearStorageData();
-            //btn.button('loading');
             cacheInvalidate(feedCach);
             cacheInvalidate(archCach);
-            //requestRefreshAndLoad();
+            lastErase = moment().unix(); 
+            localStorage.setItem('lastErase', lastErase);
+            $('#newqalert').attr('style', "display: none;");
             $('#openmodal2').button('loading');
             $('#clearmodal').modal('hide');
         });
@@ -1062,7 +1083,6 @@ document.addEventListener('DOMContentLoaded', function() {
         //Reauthorize button
         $('#reauthorize').click(function() {
             var btn = $(this);
-            //btn.button('loading');
             chrome.extension.getBackgroundPage().oAuthorize();
             $('#openmodal3').button('loading');
             $('#clearmodal').modal('hide');
@@ -1124,11 +1144,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         //Language selector radio buttons
         $('input[name="langselector"]').on('change', function() {
+            $('#clanginfo').removeAttr('style');
             if ($(this).val() === 'cast') {
                 localStorage.setItem('lang', "cast");
             } else {
                 localStorage.setItem('lang', "cat");
             }
+        });
+        
+        //More info button
+        $('#rminfo').click(function() {
+            chrome.tabs.create({ url: "https://dl.dropboxusercontent.com/s/2ikgeor201v4dqp/racomonitor.html" });
         });
         
         //Tooltips and language
@@ -1138,9 +1164,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#authlink').click(function() {
             chrome.extension.getBackgroundPage().oAuthorize();
         });
-        //$('#clearstorage').tooltip({title: getText("Borrar datos almacenados y refrescar contenido")});
-        //$('#reauthorize').tooltip({title: getText("Reautorizar interacción con el Racó")});
-        $('#helplang').tooltip({title: getText("Los cambios se aplicarán al volver a abrir el popup")});
+        $('#helplang').tooltip({title: getText("Idioma para la interfaz")});
         $('#helpnotfs').tooltip();
         $('#helpnotfsnd').tooltip();
         $('#helpdate').tooltip();

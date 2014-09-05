@@ -23,7 +23,8 @@ var i18n_ca = {
     "nuevas pestañas.": "noves pestanyes.",
     "Borrar datos almacenados y refrescar contenido": "Esborrar dades emmagatzemades i refrescar contingut",
     "Reautorizar interacción con el Racó": "Re-autoritzar interacció amb el Racó",
-    "Los cambios se aplicarán al volver a abrir el popup": "Els canvis s'aplicaran en tornar a obrir el popup",
+    "El cambio de idioma se aplicará al volver a abrir el popup.": "El canvi d'idioma s'aplicarà en tornar a obrir el popup.",
+    "Idioma para la interfaz": "Idioma per a la interfície",
     "No se ha autorizado esta aplicación para utilizar la API del Racó.": "No s\'ha autoritzat aquesta aplicació per utilitzar l\'API del Racó.",
     "Reintentar": "Re-intentar",
     "No se ha podido conectar con el Racó.": "No s\'ha pogut connectar amb el Racó.",
@@ -63,7 +64,10 @@ var i18n_ca = {
     "Reproducir sonido cuando lleguen nuevos avisos. Haz clic para escuchar una muestra": "Reproduir so quan arribin nous avisos. Fes clic per escoltar una mostra",
     "Sonido de notificación": "So de notificació",
     "activado": "activat",
-    "desactivado": "desactivat"
+    "desactivado": "desactivat",
+    "Más información": "Més informació",
+    "Recomendamos borrar los datos de avisos anteriores al empezar un nuevo cuatrimestre.": "Recomanem esborrar les dades d'avisos anteriors en començar un nou quadrimestre.",
+    "aquí": "aquí"
 };
 
 var locale = {
